@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "dudda-estudiantes",
+    "name": "Dudda",
     "slug": "dudda-estudiantes",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -15,16 +15,53 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "appp.dudda.dudda",
+      "buildNumber": "2",
+      "infoPlist": {
+        "NSLocationUsageDescription": "Dudda necesita permiso para acceder a tu ubicación para conectarte a los tutores más cercanos a ti.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Dudda necesita permiso para acceder a tu ubicación para conectarte a los tutores más cercanos a ti.",
+        "NSLocationAlwaysUsageDescription": "Dudda necesita permiso para acceder a tu ubicación para conectarte a los tutores más cercanos a ti.",
+        "NSLocationWhenInUseUsageDescription": "Dudda necesita permiso para acceder a tu ubicación para conectarte a los tutores más cercanos a ti."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "versionCode": 2,
+      "package": "appp.dudda.dudda",
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.FOREGROUND_SERVICE"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photoPermission": "Dudda requiere acceso a tu galería de imágenes para poder configurar tu foto de perfil."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Dudda requiere acceso a tu ubicación para poder conectarte a los tutores más cercanos a ti."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "1b5fd839-70d6-4d8c-9c5d-8ec4459d55b3"
+      }
+    },
+    "owner": "admin_dudda"
   }
 }
