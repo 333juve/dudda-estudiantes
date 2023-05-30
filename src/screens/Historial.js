@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   useColorScheme,
   Linking,
+  Alert
 } from "react-native";
 import * as React from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -73,7 +74,6 @@ export default function Historial() {
       </TouchableOpacity>
     );
   };
-
   const filteredLessons = lessons.reduce((uniqueLessons, lesson) => {
     const existingTutorIndex = uniqueLessons.findIndex(
       (uniqueLesson) => uniqueLesson.tutor.id === lesson.tutor.id
@@ -98,7 +98,7 @@ export default function Historial() {
   }, []);
 
   const [selectedTutor, setSelectedTutor] = React.useState(null);
-  // const [loading, setLoading] = React.useState(false);
+   const [loading, setLoading] = React.useState(false);
   // const [schedule, setSchedule] = React.useState([]);
 
   // const getData = async () => {
