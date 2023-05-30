@@ -30,12 +30,13 @@ export default function Checkout({ route }) {
   const user = useSelector((state) => state.user);
   const navigation = useNavigation();
   const [repSch, setrepSch] = useState(route?.params?.repeatSchedule);
-  const theme = useColorScheme();
-  // const { startTime, endTime, date, length, checkpoint, tutor, subject } =
-  //   route?.params;
-  console.log(route?.params?.totalPEN);
-  console.log(route?.params?.repeatSchedule);
+  const [newLessonFromHome] = useState(route?.params?.newLesson);
+  const [unPaidLesson] = useState(route?.params?.lesson);
+  let lesson = {};
 
+  //console.log("lesson from Home", lessonFromHome);
+  const theme = useColorScheme();
+  console.log(route?.params);
   // const calculateAmount = (length) => {
   //   let amount = 0;
   //   let duration = "";
@@ -62,45 +63,65 @@ export default function Checkout({ route }) {
   //   () => calculateAmount(length),
   //   [length]
   // );
-
+  if (newLessonFromHome) {
+    lesson = {
+      startTime: newLessonFromHome?.startTime,
+      endTime: newLessonFromHome?.endTime,
+      subject: newLessonFromHome?.subject,
+      date: newLessonFromHome?.date,
+      amount: newLessonFromHome?.PEN,
+      isPaid: false,
+      isCanceled: false,
+      totalDuration: newLessonFromHome?.Tduration,
+      student: {
+        id: user?.id,
+        firstName: user?.firstName,
+        lastName: user?.lastName,
+        profilePicture: user?.profilePicture,
+      },
+      tutor: {
+        id: newLessonFromHome?.tutor?.id,
+        firstName: newLessonFromHome?.tutor?.firstName,
+        lastName: newLessonFromHome?.tutor?.lastName,
+        profilePicture: newLessonFromHome?.tutor?.profilePicture,
+      },
+      videocall: "",
+    };
+  } else if (unPaidLesson) {
+    lesson = {
+      startTime: unPaidLesson?.startTime,
+      endTime: unPaidLesson?.endTime,
+      subject: unPaidLesson?.subject,
+      date: unPaidLesson?.date,
+      amount: unPaidLesson?.amount,
+      isPaid: false,
+      isCanceled: false,
+      totalDuration: unPaidLesson?.totalDuration,
+      student: {
+        id: unPaidLesson?.student?.id,
+        firstName: unPaidLesson?.student?.firstName,
+        lastName: unPaidLesson?.student?.lastName,
+        profilePicture: unPaidLesson?.student?.profilePicture,
+      },
+      tutor: {
+        id: unPaidLesson?.tutor?.id,
+        firstName: unPaidLesson?.tutor?.firstName,
+        lastName: unPaidLesson?.tutor?.lastName,
+        profilePicture: unPaidLesson?.tutor?.profilePicture,
+      },
+      videocall: "",
+    };
+  }
   const newLesson = async () => {
     try {
-      const { startTime, endTime, date, subject } = route.params;
-      const { firstName, lastName, profilePicture } = user;
-      const { amount } = calculateAmount(length);
-      const formattedDate = moment(date).format("DD/MM/YYYY");
-
       const lessonRef = collection(db, "lessons");
-      const lesson = {
-        startTime,
-        endTime,
-        subject,
-        date: formattedDate,
-        amount,
-        isPaid: false,
-        isCanceled: false,
-        student: {
-          id: user.id,
-          firstName,
-          lastName,
-          profilePicture,
-        },
-        tutor: {
-          id: tutor.id,
-          firstName: tutor.firstName,
-          lastName: tutor.lastName,
-          profilePicture: tutor.profilePicture,
-        },
-        videocall: "",
-      };
-
       const docRef = await addDoc(lessonRef, lesson);
       console.log("Document written with ID: ", docRef.id);
     } catch (error) {
       console.error("Error adding document: ", error);
     }
   };
-
+  console.log("Lesson Object", lesson);
   const spanishMonths = [
     "Enero",
     "Febrero",
@@ -123,7 +144,6 @@ export default function Checkout({ route }) {
     const dayName = new Intl.DateTimeFormat("es-ES", options).format(date);
     return dayName;
   }
-
   function getDayFromDate(dateString) {
     const [day] = dateString.split("/");
     return parseInt(day, 10);
@@ -165,37 +185,54 @@ export default function Checkout({ route }) {
               </View>
             );
           })
-        ) : (
+        ) : unPaidLesson ? (
           <View style={{ margin: 4 }}>
             <MyText type="caption">
-              Fecha: {getSpanishDayName(route?.params?.lesson.date)},
-              {getDayFromDate(route?.params?.lesson.date)} de{" "}
-              {spanishMonths[route?.params?.lesson.date.split("/")[1] - 1]}
+              Fecha: {getSpanishDayName(unPaidLesson?.date)},
+              {getDayFromDate(unPaidLesson?.date)} de{" "}
+              {spanishMonths[unPaidLesson?.date.split("/")[1] - 1]}
             </MyText>
 
             <MyText type="caption">
-              Hora: De {route?.params?.lesson.startTime} a{" "}
-              {route?.params?.lesson.endTime}
+              Hora: De {unPaidLesson?.startTime} a {unPaidLesson?.endTime}
             </MyText>
 
-            <MyText type="caption">Duración: 1 hora</MyText>
+            <MyText type="caption">Duración:{unPaidLesson?.totalDuration}</MyText>
+            <MyText type="caption">Curso:{unPaidLesson?.subject}</MyText>
+          </View>
+        ) : newLessonFromHome ? (
+          <View style={{ margin: 4 }}>
+            <MyText type="caption">Fecha: {newLessonFromHome.dateDay}</MyText>
+
             <MyText type="caption">
-              Curso:{route?.params?.lesson.subject}
+              Hora: De {newLessonFromHome.startTime} a{" "}
+              {newLessonFromHome.endTime}
+            </MyText>
+
+            <MyText type="caption">
+              Duración: {newLessonFromHome.Tduration}
+            </MyText>
+            <MyText type="caption">Curso:{newLessonFromHome.subject}</MyText>
+            <MyText style={{ fontWeight: "600" }}>
+              PEN:{newLessonFromHome.PEN}
             </MyText>
           </View>
+        ) : (
+          <MyText style={{ fontWeight: "600" }}>
+            OOPS ! SOMETHING WENT WRONG
+          </MyText>
         )}
         <View style={styles.slotWrapper}>
           <MyText style={{ fontWeight: "600" }}>TOTAL (PEN)</MyText>
-          {route?.params?.totalPEN ? (
+          {unPaidLesson ? (
             <MyText
               style={{ fontWeight: "600" }}
-            >{`PEN ${route?.params?.totalPEN}`}</MyText>
+            >{`PEN ${unPaidLesson?.amount}`}</MyText>
           ) : (
             <MyText
               style={{ fontWeight: "600" }}
-            >{`PEN ${route?.params?.lesson.amount}`}</MyText>
+            >{`PEN ${newLessonFromHome?.PEN}`}</MyText>
           )}
-
           <View style={styles.divider}></View>
         </View>
         <MyText style={{ marginBottom: 20, fontSize: 16 }}>

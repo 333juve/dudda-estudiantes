@@ -101,15 +101,20 @@ export default function Home() {
     const firstLaunch = await AsyncStorage.getItem("@firstLaunch");
     if (firstLaunch === null) navigation.navigate("Agreement");
     const token = await registerForPushNotificationsAsync();
-    const location = await requestUserLocation();
+
     if (token !== null) {
-      await updateUserLocation(user.id, location);
       await updateUserNotificationToken(user.id, token);
       dispatch(resetNotificationToken(token));
-      dispatch(resetLocation(location));
     }
-  };
-  
+    try {
+      const location = await requestUserLocation();
+      await updateUserLocation(user.id, location);
+      dispatch(resetLocation(location));
+    } catch (e) {
+      console.log("Location permission denied!");
+    }
+  }
+
   React.useEffect(() => {
     const unsubscribeLessons = onSnapshot(
       collection(db, "lessons"),
@@ -145,12 +150,12 @@ export default function Home() {
 
   async function findTutor() {
     const availAbleTutors = [];
-    console.log("Selected day", selectedDate?.getDay());
+    // console.log("Selected day", selectedDate?.getDay());
     tutorSchedule?.forEach((x) => {
-      console.log("day", day);
+      //  console.log("day", day);
       const tutorHours = x.schedule[day].hours;
       //const tutorHours = x.schedule[0].hours;
-      console.log("tutor hours ", tutorHours);
+      //console.log("tutor hours ", x.id);
       if (checkpoints) {
         let tutorAvailable = [];
         for (let i = 0; i < tutorHours.length; i++) {
@@ -174,20 +179,22 @@ export default function Home() {
         }
       }
     });
-    
+
     const fullAvailableTutor = [];
     if (endTime) {
       availAbleTutors.forEach((y) => {
         let free = false;
         lessonScheduleData?.forEach((x) => {
-          if (
-            x.tutor.id === y.id &&
-            x.startTime === startTime &&
-            x.endTime === endTime &&
-            x.date === selectedDate.toLocaleDateString("en-GB")
-          ) {
-          } else {
-            free = true;
+          if (x.id) {
+            if (
+              x.tutor.id === y.id &&
+              x.startTime === startTime &&
+              x.endTime === endTime &&
+              x.date === selectedDate.toLocaleDateString("en-GB")
+            ) {
+            } else {
+              free = true;
+            }
           }
         });
         if (free) {
@@ -197,8 +204,8 @@ export default function Home() {
     }
     setFreeTutors(fullAvailableTutor);
     const randomIndex = Math.floor(Math.random() * fullAvailableTutor.length);
-    setSelectedTutor(fullAvailableTutor[randomIndex]);
-  };
+     setSelectedTutor(fullAvailableTutor[randomIndex]);
+  }
 
   React.useEffect(() => {
     // Check if startTime and endTime are not null before calculating the difference
@@ -227,7 +234,7 @@ export default function Home() {
     setIsRefreshing(true);
     await getLessons(userID, dispatch);
     setIsRefreshing(false);
-  };
+  }
 
   function showOptions(lesson, navigation) {
     Alert.alert(
@@ -251,7 +258,7 @@ export default function Home() {
       ],
       { cancelable: true }
     );
-  };
+  }
 
   function handleReport(lesson) {
     Alert.alert("Reportar usuario", "¿Deseas reportar a este usuario?", [
@@ -263,7 +270,7 @@ export default function Home() {
       {
         text: "Reportar",
         onPress: async () => {
-          await updateDoc(doc(db, 'lessons', lesson.id), {
+          await updateDoc(doc(db, "lessons", lesson.id), {
             isCanceled: true,
             isReported: true,
           });
@@ -273,30 +280,30 @@ export default function Home() {
         style: "destructive",
       },
     ]);
-  };
+  }
 
   function handleCancelLesson(lesson, navigation) {
     Alert.alert(
-      'Cancelar clase',
-      '¿Estás seguro de que quieres cancelar esta clase?',
+      "Cancelar clase",
+      "¿Estás seguro de que quieres cancelar esta clase?",
       [
         {
-          text: 'Cancelar',
-          onPress: () => console.log('Cancel pressed'),
-          style: 'cancel',
+          text: "Cancelar",
+          onPress: () => console.log("Cancel pressed"),
+          style: "cancel",
         },
         {
-          text: 'Continuar',
+          text: "Continuar",
           onPress: () =>
-            navigation.navigate('Cancelar', {
+            navigation.navigate("Cancelar", {
               lesson: lesson,
             }),
-          style: 'destructive',
+          style: "destructive",
         },
       ],
       { cancelable: false }
     );
-  };
+  }
 
   async function sendReportEmail(lesson) {
     const body = `Este es un correo electrónico automático para el equipo de Reportes de Dudda. Por favor, escribe cualquier inquietud sobre este párrafo y no elimines nada a continuación.\nUsuario: ${user.id}\nLección: ${lesson.id}`;
@@ -307,18 +314,18 @@ export default function Home() {
     try {
       await Linking.openURL(url);
       Alert.alert(
-        '¡Gracias por tu reporte!',
-        'Lo revisaremos a continuación y nos comunicaremos contigo a la brevedad.'
+        "¡Gracias por tu reporte!",
+        "Lo revisaremos a continuación y nos comunicaremos contigo a la brevedad."
       );
-    } catch (error) {      
+    } catch (error) {
       Alert.alert(
-        'Error',
-        'No se pudo abrir el correo electrónico. Por favor, inténtalo de nuevo más tarde.'
+        "Error",
+        "No se pudo abrir el correo electrónico. Por favor, inténtalo de nuevo más tarde."
       );
     }
-  };
+  }
 
-  function handleJoinMeeting (selectedLesson) {
+  function handleJoinMeeting(selectedLesson) {
     Alert.alert(
       "¿Unirte a la reunión?",
       "¿Estás seguro que deseas unirte a la reunión?",
@@ -335,10 +342,10 @@ export default function Home() {
         },
       ]
     );
-  };
+  }
 
   function onHandleConfirm(time) {
-  // update the startTime state
+    // update the startTime state
     setStartTime(time);
     const startTime = time;
     const interval = 30;
@@ -367,7 +374,7 @@ export default function Home() {
     // console.log(startTime, endTime, checkpoints);
     // hide the modal
     setModalVisible(false);
-  };
+  }
 
   function addMinutes(time, minutes) {
     const [hours, mins] = time.split(":").map(Number);
@@ -377,11 +384,11 @@ export default function Home() {
       .padStart(2, "0");
     const newMins = (totalMins % 60).toString().padStart(2, "0");
     return `${newHours}:${newMins}`;
-  };
+  }
 
   function onHandleCancel() {
     setModalVisible(false);
-  };
+  }
 
   function addThirtyMinutes() {
     const lastIndex = checkpoints.length - 1;
@@ -399,7 +406,7 @@ export default function Home() {
         },
       ]);
     }
-  };
+  }
 
   const subtractThirtyMinutes = () => {
     let tempCheckP = checkpoints;
@@ -449,12 +456,108 @@ export default function Home() {
       handlePresentModal(lesson);
     } else {
       console.log("Lesson is not paid :", lesson);
-      navigation.navigate("Checkout", { lesson: lesson });
+      navigation.navigate("Checkout",{lesson:lesson});
+
+    }
+  }
+  const Checkout = () => {
+    let sch = [];
+    let gotoCheckout = true;
+    const options = {
+      timeZone: "UTC",
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+    };
+    const formattedDate = selectedDate.toLocaleString("es-ES", options);
+    const parts = formattedDate.split(" ");
+    const weekday = parts[0];
+    const dateAndMonth = parts.slice(1).join(" ");
+    const options2 = {
+      timeZone: "UTC",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    };
+    const formattedDate2 = selectedDate.toLocaleDateString("es-ES", options2);
+    if (checkpoints.length < 7 && checkpoints.length > 2) {
+      if (checkpoints.length === 2) {
+        sch.push({
+          dateDay: `${weekday}  ${dateAndMonth}`,
+          date: formattedDate2,
+          startTime: startTime,
+          endTime: endTime,
+          checkpoint: checkpoints,
+          tutor: selectedTutor,
+          subject: "Matemáticas",
+          PEN: "50",
+          Tduration: "1 hora",
+        });
+      } else if (checkpoints.length === 3) {
+        sch.push({
+          dateDay: `${weekday}  ${dateAndMonth}`,
+          date: formattedDate2,
+          startTime: startTime,
+          endTime: endTime,
+          checkpoint: checkpoints,
+          tutor: selectedTutor,
+          subject: "Matemáticas",
+          PEN: "75",
+          Tduration: "1 hora 30 min",
+        });
+      } else if (checkpoints.length === 4) {
+        sch.push({
+          dateDay: `${weekday}  ${dateAndMonth}`,
+          date: formattedDate2,
+          startTime: startTime,
+          endTime: endTime,
+          checkpoint: checkpoints,
+          tutor: selectedTutor,
+          subject: "Matemáticas",
+          PEN: "100",
+          Tduration: "2 horas",
+        });
+      } else if (checkpoints.length === 5) {
+        sch.push({
+          dateDay: `${weekday}  ${dateAndMonth}`,
+          date: formattedDate2,
+          startTime: startTime,
+          endTime: endTime,
+          checkpoint: checkpoints,
+          tutor: selectedTutor,
+          subject: "Matemáticas",
+          PEN: "125",
+          Tduration: "2 hora 30 min",
+        });
+      } else if (checkpoints.length === 6) {
+        sch.push({
+          dateDay: `${weekday}  ${dateAndMonth}`,
+          date: formattedDate2,
+          startTime: startTime,
+          endTime: endTime,
+          checkpoint: checkpoints,
+          tutor: selectedTutor,
+          subject: "Matemáticas",
+          PEN: "150",
+          Tduration: "3 horas",
+        });
+      } else {
+        gotoCheckout = false;
+      }
+    }
+    if (gotoCheckout) {
+      navigation.navigate("Checkout", {
+        newLesson: sch[0],
+      });
+      handleClosePress();
+      setStartTime(null);
+      setEndTime(null);
+      setSelectedDate(null);
     }
   };
 
   return (
-<BottomSheetModalProvider>
+    <BottomSheetModalProvider>
       <ScrollView
         style={styles.container}
         showsVerticalScrollIndicator={false}
@@ -770,7 +873,14 @@ export default function Home() {
                   </MyText>
                 }
                 {timeDiff <= 100 && (
-                  <View style={{ flexDirection: "row", alignItems: 'center', justifyContent: 'center', marginTop: 10 }}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginTop: 10,
+                    }}
+                  >
                     <Ionicons
                       name="alert-circle-outline"
                       size={20}
@@ -779,7 +889,7 @@ export default function Home() {
                     <Text
                       style={{
                         color: "#EF4444",
-                        marginLeft: 5,                      
+                        marginLeft: 5,
                       }}
                     >
                       El tiempo mínimo para una clase es de 1 hora.
@@ -787,7 +897,14 @@ export default function Home() {
                   </View>
                 )}
                 {timeDiff >= 300 && (
-                  <View style={{ flexDirection: "row", alignItems: 'center', justifyContent: 'center', marginTop: 10 }}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginTop: 10,
+                    }}
+                  >
                     <Ionicons
                       name="alert-circle-outline"
                       size={20}
@@ -821,32 +938,21 @@ export default function Home() {
                         [
                           {
                             text: "Soporte",
-                            onPress: () => Linking.openURL("https://api.whatsapp.com/send?phone=51941379335&text=%C2%A1Hola!%20%C2%BFC%C3%B3mo%20est%C3%A1s%3F%20Necesito%20tu%20ayuda."),
-                            
+                            onPress: () =>
+                              Linking.openURL(
+                                "https://api.whatsapp.com/send?phone=51941379335&text=%C2%A1Hola!%20%C2%BFC%C3%B3mo%20est%C3%A1s%3F%20Necesito%20tu%20ayuda."
+                              ),
                           },
                           {
                             text: "Descartar",
                             onPress: () => {},
-                            style: "cancel"
+                            style: "cancel",
                           },
                         ],
                         { cancelable: true }
                       );
-                      
                     } else {
-                      navigation.navigate("Checkout", {
-                        date: selectedDate,
-                        startTime,
-                        endTime,
-                        length: timeDiff,
-                        checkpoint: checkpoints,
-                        tutor: selectedTutor,
-                        subject: "Matemáticas",
-                      });
-                      handleClosePress();
-                      setStartTime(null);
-                      setEndTime(null);
-                      setSelectedDate(null);
+                      Checkout();
                     }
                   }}
                 >
