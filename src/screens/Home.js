@@ -1,6 +1,7 @@
 import * as React from "react";
 import {
   StyleSheet,
+  Button,
   Alert,
   Linking,
   Text,
@@ -30,7 +31,7 @@ import NewTutor from "../../assets/new-tutor.svg";
 import Calendar from "../../assets/calendar.svg";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import CustomPickerModal from "../components/home/CustomPicker";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot, where, getDocs } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { registerForPushNotificationsAsync } from "../utils/registerForPushNotificationsAsync";
 import { requestUserLocation } from "../utils/requestUserLocation";
@@ -43,6 +44,7 @@ import moment from "moment";
 import "moment/locale/es";
 import Entypo from "react-native-vector-icons/Entypo";
 import Colors from "../../constants/colors";
+import { setLessonsReducer } from "../features/lessonsReducer";
 
 export default function Home() {
   const user = useSelector((state) => state.user);
@@ -50,7 +52,6 @@ export default function Home() {
   const dispatch = useDispatch();
   const theme = useColorScheme();
   const navigation = useNavigation();
-  moment.locale("ES");
 
   const [isLoading, setIsLoading] = React.useState(true);
   const [refreshing, setIsRefreshing] = React.useState(false);
@@ -92,66 +93,9 @@ export default function Home() {
   React.useEffect(() => {
     checkFirstLaunch();
     getLessons(user.id, dispatch);
-    getNotifications(user.id, dispatch).finally(() => setIsLoading(false));
+    getNotifications(user.id, dispatch);
     setIsLoading(false);
   }, []);
-
-  // get schedule of all tutors and lessons
-  React.useEffect(() => {
-    const unsubscribeLessons = onSnapshot(
-      collection(db, "lessons"),
-      (querySnapshot) => {
-        const lessonData = [];
-        querySnapshot.forEach((doc) => {
-          lessonData.push(doc.data());
-        });
-        setlessonScheduleData(lessonData);
-      }
-    );
-  
-    const unsubscribeTutors = onSnapshot(
-      collection(db, "tutors"),
-      (querySnapshot) => {
-        const scheduleData = [];
-        querySnapshot.forEach((doc) => {
-          scheduleData.push(doc.data());
-        });
-        setTutorSchedule(scheduleData);
-      }
-    );
-  
-    return () => {
-      unsubscribeLessons();
-      unsubscribeTutors();
-    };
-  }, []);
-
-  React.useEffect(() => {
-    findTutor();
-  }, [endTime, selectedDate, startTime, day]);
-
-  React.useEffect(() => {
-    // Check if startTime and endTime are not null before calculating the difference
-    if (startTime && endTime) {
-      const [startHour, startMinute] = startTime
-        .split(":")
-        .map((time) => parseInt(time));
-      const [endHour, endMinute] = endTime
-        .split(":")
-        .map((time) => parseInt(time));
-
-      const totalMinutes =
-        endHour * 60 + endMinute - (startHour * 60 + startMinute);
-      const hours = Math.floor(totalMinutes / 60);
-      const minutes = totalMinutes % 60;
-      setHours(hours);
-      setMinutes(minutes);
-      const start = parseInt(startTime.replace(":", ""));
-      const end = parseInt(endTime.replace(":", ""));
-      const diff = end - start;
-      setTimeDiff(diff);
-    }
-  }, [startTime, endTime]);
 
   async function checkFirstLaunch() {
     const firstLaunch = await AsyncStorage.getItem("@firstLaunch");
@@ -164,124 +108,42 @@ export default function Home() {
       dispatch(resetNotificationToken(token));
       dispatch(resetLocation(location));
     }
-  }
-  
-  // refresh
-  async function handleOnRefresh(userID) {
-    setIsRefreshing(true);
-    await getLessons(userID, dispatch);
-    setIsRefreshing(false);
-  }
-
-  function showOptions(lesson, navigation) {
-    Alert.alert(
-      "Configuración",
-      "Por favor, selecciona una de las siguientes opciones.",
-      [
-        {
-          text: "Reportar usuario",
-          onPress: () => handleReport(lesson),
-        },
-        {
-          text: "Cancelar clase",
-          onPress: () => handleCancelLesson(lesson, navigation),
-          style: "destructive",
-        },
-        {
-          text: "Descartar",
-          onPress: () => console.log("Descartar"),
-          style: "cancel",
-        },
-      ],
-      { cancelable: true }
-    );
-  }
-
-  function handleReport(lesson) {
-    Alert.alert("Reportar usuario", "¿Deseas reportar a este usuario?", [
-      {
-        text: "Cancelar",
-        onPress: () => console.log("Cancelar pressed"),
-        style: "cancel",
-      },
-      {
-        text: "Reportar",
-        onPress: async () => {
-          await updateDoc(doc(db, 'lessons', lesson.id), {
-            isCanceled: true,
-            isReported: true,
-          });
-          await getLessons(user.id, dispatch);
-          await sendReportEmail(lesson);
-        },
-        style: "destructive",
-      },
-    ]);
-  }
-
-  function handleCancelLesson(lesson, navigation) {
-    Alert.alert(
-      'Cancelar clase',
-      '¿Estás seguro de que quieres cancelar esta clase?',
-      [
-        {
-          text: 'Cancelar',
-          onPress: () => console.log('Cancel pressed'),
-          style: 'cancel',
-        },
-        {
-          text: 'Continuar',
-          onPress: () =>
-            navigation.navigate('Cancelar', {
-              lesson: lesson,
-            }),
-          style: 'destructive',
-        },
-      ],
-      { cancelable: false }
-    );
-  }
-
-  async function sendReportEmail(lesson) {
-    const body = `Este es un correo electrónico automático para el equipo de Reportes de Dudda. Por favor, escribe cualquier inquietud sobre este párrafo y no elimines nada a continuación.\nUsuario: ${user.id}\nLección: ${lesson.id}`;
-
-    const encodedBody = encodeURIComponent(body);
-    const url = `mailto:contacto@dudda.app?subject=Reporte&body=${encodedBody}`;
-
-    try {
-      await Linking.openURL(url);
-      Alert.alert(
-        '¡Gracias por tu reporte!',
-        'Lo revisaremos a continuación y nos comunicaremos contigo a la brevedad.'
-      );
-    } catch (error) {      
-      Alert.alert(
-        'Error',
-        'No se pudo abrir el correo electrónico. Por favor, inténtalo de nuevo más tarde.'
-      );
-    }
-  }
-
-  const handleJoinMeeting = (selectedLesson) => {
-    Alert.alert(
-      "¿Unirte a la reunión?",
-      "¿Estás seguro que deseas unirte a la reunión?",
-      [
-        {
-          text: "Cancelar",
-          style: "cancel",
-        },
-        {
-          text: "Unirse",
-          onPress: () => {
-            Linking.openURL(selectedLesson.videocall);
-          },
-        },
-      ]
-    );
   };
+  
+  React.useEffect(() => {
+    const unsubscribeLessons = onSnapshot(
+      collection(db, "lessons"),
+      (querySnapshot) => {
+        const lessonData = [];
+        querySnapshot.forEach((doc) => {
+          lessonData.push(doc.data());
+        });
+        setlessonScheduleData(lessonData);
+      }
+    );
 
-  const findTutor = async () => {
+    const unsubscribeTutors = onSnapshot(
+      collection(db, "tutors"),
+      (querySnapshot) => {
+        const scheduleData = [];
+        querySnapshot.forEach((doc) => {
+          scheduleData.push(doc.data());
+        });
+        setTutorSchedule(scheduleData);
+      }
+    );
+
+    return () => {
+      unsubscribeLessons();
+      unsubscribeTutors();
+    };
+  }, []);
+
+  React.useEffect(() => {
+    findTutor();
+  }, [endTime, selectedDate, startTime, day]);
+
+  async function findTutor() {
     const availAbleTutors = [];
     console.log("Selected day", selectedDate?.getDay());
     tutorSchedule?.forEach((x) => {
@@ -312,8 +174,7 @@ export default function Home() {
         }
       }
     });
-
-    // console.log("available tutors from tutors :", availAbleTutors);
+    
     const fullAvailableTutor = [];
     if (endTime) {
       availAbleTutors.forEach((y) => {
@@ -339,8 +200,145 @@ export default function Home() {
     setSelectedTutor(fullAvailableTutor[randomIndex]);
   };
 
-  const onHandleConfirm = (time) => {
-    // update the startTime state
+  React.useEffect(() => {
+    // Check if startTime and endTime are not null before calculating the difference
+    if (startTime && endTime) {
+      const [startHour, startMinute] = startTime
+        .split(":")
+        .map((time) => parseInt(time));
+      const [endHour, endMinute] = endTime
+        .split(":")
+        .map((time) => parseInt(time));
+
+      const totalMinutes =
+        endHour * 60 + endMinute - (startHour * 60 + startMinute);
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+      setHours(hours);
+      setMinutes(minutes);
+      const start = parseInt(startTime.replace(":", ""));
+      const end = parseInt(endTime.replace(":", ""));
+      const diff = end - start;
+      setTimeDiff(diff);
+    }
+  }, [startTime, endTime]);
+
+  async function handleOnRefresh(userID) {
+    setIsRefreshing(true);
+    await getLessons(userID, dispatch);
+    setIsRefreshing(false);
+  };
+
+  function showOptions(lesson, navigation) {
+    Alert.alert(
+      "Configuración",
+      "Por favor, selecciona una de las siguientes opciones.",
+      [
+        {
+          text: "Reportar usuario",
+          onPress: () => handleReport(lesson),
+        },
+        {
+          text: "Cancelar clase",
+          onPress: () => handleCancelLesson(lesson, navigation),
+          style: "destructive",
+        },
+        {
+          text: "Descartar",
+          onPress: () => console.log("Descartar"),
+          style: "cancel",
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  function handleReport(lesson) {
+    Alert.alert("Reportar usuario", "¿Deseas reportar a este usuario?", [
+      {
+        text: "Cancelar",
+        onPress: () => console.log("Cancelar pressed"),
+        style: "cancel",
+      },
+      {
+        text: "Reportar",
+        onPress: async () => {
+          await updateDoc(doc(db, 'lessons', lesson.id), {
+            isCanceled: true,
+            isReported: true,
+          });
+          await getLessons(user.id, dispatch);
+          await sendReportEmail(lesson);
+        },
+        style: "destructive",
+      },
+    ]);
+  };
+
+  function handleCancelLesson(lesson, navigation) {
+    Alert.alert(
+      'Cancelar clase',
+      '¿Estás seguro de que quieres cancelar esta clase?',
+      [
+        {
+          text: 'Cancelar',
+          onPress: () => console.log('Cancel pressed'),
+          style: 'cancel',
+        },
+        {
+          text: 'Continuar',
+          onPress: () =>
+            navigation.navigate('Cancelar', {
+              lesson: lesson,
+            }),
+          style: 'destructive',
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  async function sendReportEmail(lesson) {
+    const body = `Este es un correo electrónico automático para el equipo de Reportes de Dudda. Por favor, escribe cualquier inquietud sobre este párrafo y no elimines nada a continuación.\nUsuario: ${user.id}\nLección: ${lesson.id}`;
+
+    const encodedBody = encodeURIComponent(body);
+    const url = `mailto:contacto@dudda.app?subject=Reporte&body=${encodedBody}`;
+
+    try {
+      await Linking.openURL(url);
+      Alert.alert(
+        '¡Gracias por tu reporte!',
+        'Lo revisaremos a continuación y nos comunicaremos contigo a la brevedad.'
+      );
+    } catch (error) {      
+      Alert.alert(
+        'Error',
+        'No se pudo abrir el correo electrónico. Por favor, inténtalo de nuevo más tarde.'
+      );
+    }
+  };
+
+  function handleJoinMeeting (selectedLesson) {
+    Alert.alert(
+      "¿Unirte a la reunión?",
+      "¿Estás seguro que deseas unirte a la reunión?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel",
+        },
+        {
+          text: "Unirse",
+          onPress: () => {
+            Linking.openURL(selectedLesson.videocall);
+          },
+        },
+      ]
+    );
+  };
+
+  function onHandleConfirm(time) {
+  // update the startTime state
     setStartTime(time);
     const startTime = time;
     const interval = 30;
@@ -379,13 +377,13 @@ export default function Home() {
       .padStart(2, "0");
     const newMins = (totalMins % 60).toString().padStart(2, "0");
     return `${newHours}:${newMins}`;
-  }
+  };
 
-  const onHandleCancel = () => {
+  function onHandleCancel() {
     setModalVisible(false);
   };
 
-  const addThirtyMinutes = () => {
+  function addThirtyMinutes() {
     const lastIndex = checkpoints.length - 1;
     const lastEndTime = checkpoints[lastIndex].endTime;
     const newStartTime = lastEndTime;
@@ -443,7 +441,7 @@ export default function Home() {
     }, 100);
   }
 
-  const LessonPress = (lesson) => {
+  function LessonPress(lesson) {
     if (lesson.isPaid) {
       console.log("Lesson is paid :", lesson);
       setSelectedLesson(lesson);
@@ -456,7 +454,7 @@ export default function Home() {
   };
 
   return (
-    <BottomSheetModalProvider>
+<BottomSheetModalProvider>
       <ScrollView
         style={styles.container}
         showsVerticalScrollIndicator={false}

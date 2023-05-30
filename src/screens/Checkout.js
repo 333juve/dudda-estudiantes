@@ -100,7 +100,7 @@ export default function Checkout({ route }) {
       console.error("Error adding document: ", error);
     }
   };
-  
+
   const spanishMonths = [
     "Enero",
     "Febrero",
@@ -179,8 +179,8 @@ export default function Checkout({ route }) {
             </MyText>
 
             <MyText type="caption">Duración: 1 hora</MyText>
-            <MyText style={{ fontWeight: "600" }}>
-              Subject :{route?.params?.lesson.subject}
+            <MyText type="caption">
+              Curso:{route?.params?.lesson.subject}
             </MyText>
           </View>
         )}

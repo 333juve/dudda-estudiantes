@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import MyText from "../components/MyText";
 import MyButton from "../components/MyButton";
-import { updateDoc, doc } from "firebase/firestore";
+import { updateDoc, doc, getDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { useNavigation } from "@react-navigation/native";
 import { getLessons } from "../utils/lessonsOperations";
@@ -28,6 +28,19 @@ export default function Cancel({ route }) {
   const theme = useColorScheme();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
+
+  const getNotificationToken = async (tutorId) => {
+    const docRef = doc(db, "tutors", tutorId);
+    const docSnap = await getDoc(docRef);
+  
+    if (docSnap.exists()) {
+      return docSnap.data().notificationToken;
+    } else {
+      console.log("No such document!");
+      return null;
+    }
+  };
+  
 
   const message = {
     to: `${lesson.tutor.notificationToken}`,
@@ -54,6 +67,10 @@ export default function Cancel({ route }) {
               await updateDoc(doc(db, "lessons", lesson.id), {
                 isCanceled: true,
               });
+              const notificationToken = await getNotificationToken(lesson.tutor.id);
+              if (notificationToken) {
+                message.to = notificationToken;
+              }
               await sendPushNotificationExpo(message);
               await getLessons(user.id, dispatch);
               navigation.navigate("Home");
@@ -86,15 +103,15 @@ export default function Cancel({ route }) {
           }}
         >
           <View style={{ flexDirection: "row" }}>
-            {lesson.student.profilePicture ? (
+            {lesson.tutor.profilePicture ? (
               <Image
-                source={{ uri: lesson.student.profilePicture }}
+                source={{ uri: lesson.tutor.profilePicture }}
                 style={styles.image}
               />
             ) : (
               <View style={styles.fallback}>
                 <MyText style={{ fontSize: 20, color: "#fff" }} type="caption">
-                  {lesson.student.firstName.charAt(0)}
+                  {lesson.tutor.firstName.charAt(0)}
                 </MyText>
               </View>
             )}
@@ -107,7 +124,7 @@ export default function Cancel({ route }) {
               </MyText>
 
               <MyText>
-                {lesson.student.firstName} {lesson.student.lastName}
+                {lesson.tutor.firstName} {lesson.tutor.lastName}
               </MyText>
             </View>
           </View>
