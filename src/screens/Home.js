@@ -204,7 +204,7 @@ export default function Home() {
     }
     setFreeTutors(fullAvailableTutor);
     const randomIndex = Math.floor(Math.random() * fullAvailableTutor.length);
-     setSelectedTutor(fullAvailableTutor[randomIndex]);
+    setSelectedTutor(fullAvailableTutor[randomIndex]);
   }
 
   React.useEffect(() => {
@@ -456,8 +456,7 @@ export default function Home() {
       handlePresentModal(lesson);
     } else {
       console.log("Lesson is not paid :", lesson);
-      navigation.navigate("Checkout",{lesson:lesson});
-
+      navigation.navigate("Checkout", { lesson: lesson });
     }
   }
   const Checkout = () => {
@@ -480,7 +479,7 @@ export default function Home() {
       day: "2-digit",
     };
     const formattedDate2 = selectedDate.toLocaleDateString("es-ES", options2);
-    if (checkpoints.length < 7 && checkpoints.length > 2) {
+    if (checkpoints.length < 7 && checkpoints.length >= 2) {
       if (checkpoints.length === 2) {
         sch.push({
           dateDay: `${weekday}  ${dateAndMonth}`,
