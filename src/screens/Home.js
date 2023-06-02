@@ -100,11 +100,12 @@ export default function Home() {
   async function checkFirstLaunch() {
     const firstLaunch = await AsyncStorage.getItem("@firstLaunch");
     if (firstLaunch === null) navigation.navigate("Agreement");
-    const token = await registerForPushNotificationsAsync();
-
-    if (token !== null) {
+    try {
+      const token = await registerForPushNotificationsAsync();
       await updateUserNotificationToken(user.id, token);
       dispatch(resetNotificationToken(token));
+    } catch (e) {
+      console.log("error while fetching pushNotificationToken", e);
     }
     try {
       const location = await requestUserLocation();

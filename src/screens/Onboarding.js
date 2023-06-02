@@ -31,13 +31,23 @@ export default function Onboarding() {
     try {
       await AsyncStorage.setItem("@firstLaunch", "true");
       navigation.navigate("Home");
-      const token = await registerForPushNotificationsAsync();
-      const location = await requestLocationPermissions();
-      if (token !== null) {
+      try {
+        const token = await registerForPushNotificationsAsync();
         await updateUserNotificationToken(id, token);
-        await updateUserLocation(id, location);
         dispatch(resetNotificationToken(token));
+      } catch (e) {
+        console.log(
+          "error while getting notification token while onboarding",
+          e
+        );
+      }
+
+      try {
+        const location = await requestLocationPermissions();
+        await updateUserLocation(id, location);
         dispatch(resetLocation(location));
+      } catch (e) {
+        console.log("error locaation permission denied! while onboarding", e);
       }
     } catch (e) {
       console.log("Onboarding error", e);

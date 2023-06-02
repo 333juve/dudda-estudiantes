@@ -113,12 +113,16 @@ export default function Checkout({ route }) {
     };
   }
   const newLesson = async () => {
-    try {
-      const lessonRef = collection(db, "lessons");
-      const docRef = await addDoc(lessonRef, lesson);
-      console.log("Document written with ID: ", docRef.id);
-    } catch (error) {
-      console.error("Error adding document: ", error);
+    if (unPaidLesson) {
+      console.log("Unpaid lesson has not beed added again into firestore");
+    } else {
+      try {
+        const lessonRef = collection(db, "lessons");
+        const docRef = await addDoc(lessonRef, lesson);
+        console.log("Document written with ID: ", docRef.id);
+      } catch (error) {
+        console.error("Error adding document: ", error);
+      }
     }
   };
   console.log("Lesson Object", lesson);
@@ -197,7 +201,9 @@ export default function Checkout({ route }) {
               Hora: De {unPaidLesson?.startTime} a {unPaidLesson?.endTime}
             </MyText>
 
-            <MyText type="caption">Duración:{unPaidLesson?.totalDuration}</MyText>
+            <MyText type="caption">
+              Duración:{unPaidLesson?.totalDuration}
+            </MyText>
             <MyText type="caption">Curso:{unPaidLesson?.subject}</MyText>
           </View>
         ) : newLessonFromHome ? (
