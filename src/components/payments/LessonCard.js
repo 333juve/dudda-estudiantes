@@ -83,7 +83,7 @@ export default LessonCard = ({ lesson }) => {
       </TouchableOpacity>
       <View style={styles.rowSpaceBetween}>
         <MyText style={styles.boldText} type="caption">
-          PEN {lesson.amount.toFixed(2)}
+          PEN {lesson.amount}
         </MyText>
         <MyText style={styles.boldText} type="caption">
           {lesson.isPaid === false ? "Pago pendiente" : "Pago realizado"}
