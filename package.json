@@ -47,7 +47,8 @@
     "react-native-vector-icons": "^9.2.0",
     "react-redux": "^8.0.5",
     "redux-thunk": "^2.4.2",
-    "vexo-analytics": "^1.2.4"
+    "vexo-analytics": "^1.2.4",
+    "expo-dev-client": "~2.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

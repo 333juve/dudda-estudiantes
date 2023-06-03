@@ -112,6 +112,7 @@ export default function Checkout({ route }) {
       videocall: "",
     };
   }
+  
   const newLesson = async () => {
     if (unPaidLesson) {
       console.log("Unpaid lesson has not beed added again into firestore");
@@ -125,7 +126,9 @@ export default function Checkout({ route }) {
       }
     }
   };
+
   console.log("Lesson Object", lesson);
+
   const spanishMonths = [
     "Enero",
     "Febrero",
@@ -148,6 +151,7 @@ export default function Checkout({ route }) {
     const dayName = new Intl.DateTimeFormat("es-ES", options).format(date);
     return dayName;
   }
+
   function getDayFromDate(dateString) {
     const [day] = dateString.split("/");
     return parseInt(day, 10);
@@ -165,6 +169,7 @@ export default function Checkout({ route }) {
     });
     Clipboard.setStringAsync(value);
   };
+
   return (
     <View style={styles.container}>
       <MyText style={styles.header}>Detalles de reserva</MyText>

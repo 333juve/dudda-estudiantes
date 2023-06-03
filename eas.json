@@ -18,9 +18,6 @@
         "appleId": "admin@dudda.app",
         "ascAppId": "6449652729",
         "appleTeamId": "JVT8FGT5UF"
-      },
-      "android": {
-        "serviceAccountKeyPath": "./key/"
       }
     }
   }

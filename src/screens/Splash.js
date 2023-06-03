@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../features/userReducer";
 import { setNotifications } from "../features/notificationsReducer";
 import { getUser } from "../utils/userOperations";
-import { getNotificationsByUserID } from "../utils/notificationsOperations";
+import { getNotifications } from "../utils/notificationsOperations";
 
 export default function Splash() {
   const { user } = useSelector((state) => state.user);
@@ -22,7 +22,7 @@ export default function Splash() {
       try {
         if (user && user.id !== undefined) {
           const userDoc = await getUser(user.id);
-          const { notificationsList } = await getNotificationsByUserID(user.id);
+          const { notificationsList } = await getNotifications(user.id, dispatch);
           if (notificationsList) dispatch(setNotifications(notificationsList));
           dispatch(
             setUser({

@@ -43,7 +43,7 @@ function App() {
     const userRef = doc(db, "students", userID);
     const userDoc = await getDoc(userRef);
     return userDoc;  
-  }
+  };
 
   React.useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {

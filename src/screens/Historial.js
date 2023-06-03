@@ -121,7 +121,7 @@ export default function Historial() {
 
   const initiateWhatsAppSMS = () => {
     const message = `¡Hola! Me gustaría programar una clase con ${selectedTutor.firstName} ${selectedTutor.lastName}. Le comparto mis datos: Mi nombre es ${user.firstName} ${user.lastName} y mi ID es ${user.id}`;
-    let url = "whatsapp://send?text=" + message + "&phone=92" + "3170695979";
+    let url = "whatsapp://send?text=" + message + "&phone=51" + "941379335";
     Linking.openURL(url)
       .then(() => navigation.navigate("Inicio"))
       .catch(() => {

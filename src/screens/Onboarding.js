@@ -22,37 +22,8 @@ import { resetNotificationToken, resetLocation } from "../features/userReducer";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 export default function Onboarding() {
-  const { id } = useSelector((state) => state.user);
-  const dispatch = useDispatch();
   const navigation = useNavigation();
   const theme = useColorScheme();
-
-  async function handleOnContinue() {
-    try {
-      await AsyncStorage.setItem("@firstLaunch", "true");
-      navigation.navigate("Home");
-      try {
-        const token = await registerForPushNotificationsAsync();
-        await updateUserNotificationToken(id, token);
-        dispatch(resetNotificationToken(token));
-      } catch (e) {
-        console.log(
-          "error while getting notification token while onboarding",
-          e
-        );
-      }
-
-      try {
-        const location = await requestLocationPermissions();
-        await updateUserLocation(id, location);
-        dispatch(resetLocation(location));
-      } catch (e) {
-        console.log("error locaation permission denied! while onboarding", e);
-      }
-    } catch (e) {
-      console.log("Onboarding error", e);
-    }
-  }
 
   return (
     <View style={{ flex: 1, justifyContent: "center" }}>
@@ -80,7 +51,7 @@ export default function Onboarding() {
       <MyButton
         style={{ marginTop: 50 }}
         title="Continuar"
-        onPress={handleOnContinue}
+        onPress={() => navigation.navigate("Home")}
       />
       <StatusBar
         barStyle={theme === "dark" ? "light-content" : "dark-content"}
@@ -110,27 +81,26 @@ const styles = StyleSheet.create({
 const appFeatures = [
   {
     icon: "ios-calendar",
-    title: "Selecciona tus horarios.",
-    description: "Encontraras la opción en el menú izquierdo.",
+    title: "Agenda una clase particular en segundos",
+    description: "Solo tienes que seguir tres simples pasos.",
     color: "#FF5733",
   },
   {
     icon: "ios-card",
-    title: "Agrega un método de pago.",
-    description: "En el menú izquierdo ingresa a la opción Depósitos.",
+    title: "Selecciona la fecha",
+    description: "",
     color: "#10AA57",
   },
   {
-    icon: "checkmark-circle",
-    title: "Rinde el examen para verificar tu cuenta.",
-    description: "Hemos enviado el enlace a tu correo electrónico.",
+    icon: "",
+    title: "Elige el horario",
+    description: "",
     color: "#33A2FF",
   },
   {
     icon: "ios-bookmarks",
-    title: "Empieza a recibir clases.",
-    description:
-      "Accede a los detalles desde la app y te contactaremos para confirmar.",
+    title: "Confirma tu pago",
+    description: "Envíanos tu comprobante de pago.",
     color: "#FFC133",
   },
 ];

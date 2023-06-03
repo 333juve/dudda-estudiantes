@@ -98,23 +98,18 @@ export default function Home() {
   }, []);
 
   async function checkFirstLaunch() {
-    const firstLaunch = await AsyncStorage.getItem("@firstLaunch");
-    if (firstLaunch === null) navigation.navigate("Agreement");
-    try {
-      const token = await registerForPushNotificationsAsync();
+
+    const firstLaunch = await AsyncStorage.getItem('@firstLaunch');
+    if (firstLaunch === null) navigation.navigate('Agreement');
+    const token = await registerForPushNotificationsAsync();
+    const location = await requestUserLocation();
+    if (token !== null) {
+      await updateUserLocation(user.id, location);
       await updateUserNotificationToken(user.id, token);
       dispatch(resetNotificationToken(token));
-    } catch (e) {
-      console.log("error while fetching pushNotificationToken", e);
-    }
-    try {
-      const location = await requestUserLocation();
-      await updateUserLocation(user.id, location);
       dispatch(resetLocation(location));
-    } catch (e) {
-      console.log("Location permission denied!");
     }
-  }
+  };
 
   React.useEffect(() => {
     const unsubscribeLessons = onSnapshot(
@@ -151,7 +146,7 @@ export default function Home() {
 
   async function findTutor() {
     const availAbleTutors = [];
-    // console.log("Selected day", selectedDate?.getDay());
+    console.log("Selected day", selectedDate?.getDay());
     tutorSchedule?.forEach((x) => {
       //  console.log("day", day);
       const tutorHours = x.schedule[day].hours;
@@ -460,6 +455,7 @@ export default function Home() {
       navigation.navigate("Checkout", { lesson: lesson });
     }
   }
+  
   const Checkout = () => {
     let sch = [];
     let gotoCheckout = true;
