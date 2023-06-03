@@ -30,7 +30,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "versionCode": 2,
+      "versionCode": 3,
       "package": "appp.dudda.dudda",
       "googleServicesFile": "./google-services.json",
       "permissions": [
@@ -54,6 +54,12 @@
         "expo-location",
         {
           "locationAlwaysAndWhenInUsePermission": "Dudda requiere acceso a tu ubicación para poder conectarte a los tutores más cercanos a ti."
+        }
+      ],      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#ffffff"
         }
       ]
     ],

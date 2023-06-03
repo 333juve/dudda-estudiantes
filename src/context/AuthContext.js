@@ -62,7 +62,9 @@ function AuthProvider({ children }) {
   };
 
   async function handleSignIn() {
-    if (!email || !password) {
+    const trimmedEmail = email.trim();
+    
+    if (!trimmedEmail || !password) {
       Alert.alert(
         "Información incompleta",
         "Por favor, ingresa tu correo electrónico y contraseña."
@@ -71,7 +73,7 @@ function AuthProvider({ children }) {
     } else {
       try {
         setIsLoading(true);
-        await signInWithEmailAndPassword(auth, email, password);
+        await signInWithEmailAndPassword(auth, trimmedEmail, password);
         const user = auth.currentUser;
         const docRef = doc(db, "students", user.uid);
         const docSnap = await getDoc(docRef);
@@ -128,8 +130,10 @@ function AuthProvider({ children }) {
   };
 
   async function handleSignUp() {
+    const trimmedEmail = email.trim();
+
     if (
-      !email ||
+      !trimmedEmail ||
       !password ||
       !firstName ||
       !lastName ||
@@ -151,7 +155,7 @@ function AuthProvider({ children }) {
       const fullName = firstName.concat(" ", lastName);
       const { user } = await createUserWithEmailAndPassword(
         auth,
-        email,
+        trimmedEmail,
         password
       );
       await sendEmailVerification(auth.currentUser);
@@ -215,11 +219,12 @@ function AuthProvider({ children }) {
   async function handleResendVerificationCode() {};
 
   async function saveUserToDatabase(user) {
+    const trimmedEmail = email.trim();
+    
     const userToSave = {
       birthday: formatDate(birthday),
-
       createdAt: new Date().toDateString(),
-      email: user.email.toLowerCase(),
+      email: trimmedEmail.toLowerCase(),
       firstName: firstName,
       id: user.uid,
       lastName: lastName,
