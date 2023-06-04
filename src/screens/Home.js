@@ -486,7 +486,7 @@ export default function Home() {
           checkpoint: checkpoints,
           tutor: selectedTutor,
           subject: "Matemáticas",
-          PEN: "50",
+          PEN: 44.9,
           Tduration: "1 hora",
         });
       } else if (checkpoints.length === 3) {
@@ -498,7 +498,7 @@ export default function Home() {
           checkpoint: checkpoints,
           tutor: selectedTutor,
           subject: "Matemáticas",
-          PEN: "75",
+          PEN: 64.9,
           Tduration: "1 hora 30 min",
         });
       } else if (checkpoints.length === 4) {
@@ -510,7 +510,7 @@ export default function Home() {
           checkpoint: checkpoints,
           tutor: selectedTutor,
           subject: "Matemáticas",
-          PEN: "100",
+          PEN: 84.9,
           Tduration: "2 horas",
         });
       } else if (checkpoints.length === 5) {
@@ -522,7 +522,7 @@ export default function Home() {
           checkpoint: checkpoints,
           tutor: selectedTutor,
           subject: "Matemáticas",
-          PEN: "125",
+          PEN: 104.9,
           Tduration: "2 hora 30 min",
         });
       } else if (checkpoints.length === 6) {
@@ -534,7 +534,7 @@ export default function Home() {
           checkpoint: checkpoints,
           tutor: selectedTutor,
           subject: "Matemáticas",
-          PEN: "150",
+          PEN: 124.9,
           Tduration: "3 horas",
         });
       } else {

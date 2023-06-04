@@ -37,6 +37,7 @@ export default function Checkout({ route }) {
   //console.log("lesson from Home", lessonFromHome);
   const theme = useColorScheme();
   console.log(route?.params);
+
   // const calculateAmount = (length) => {
   //   let amount = 0;
   //   let duration = "";
@@ -63,6 +64,7 @@ export default function Checkout({ route }) {
   //   () => calculateAmount(length),
   //   [length]
   // );
+  
   if (newLessonFromHome) {
     lesson = {
       startTime: newLessonFromHome?.startTime,
@@ -173,7 +175,7 @@ export default function Checkout({ route }) {
   return (
     <View style={styles.container}>
       <MyText style={styles.header}>Detalles de reserva</MyText>
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView>
         {repSch ? (
           repSch.map((item) => {
             return (
@@ -209,7 +211,7 @@ export default function Checkout({ route }) {
             <MyText type="caption">
               Duración:{unPaidLesson?.totalDuration}
             </MyText>
-            <MyText type="caption">Curso:{unPaidLesson?.subject}</MyText>
+            <MyText type="caption">Curso: {unPaidLesson?.subject}</MyText>
           </View>
         ) : newLessonFromHome ? (
           <View style={{ margin: 4 }}>
@@ -314,7 +316,7 @@ export default function Checkout({ route }) {
           />
         </TouchableOpacity>
 
-        <Toast position="bottom" bottomOffset={20} />
+        
       </ScrollView>
       <MyButton
         title={"Confirmar"}
@@ -322,7 +324,9 @@ export default function Checkout({ route }) {
           newLesson();
           navigation.navigate("Home");
         }}
+        style={{ marginBottom: 45 }}
       />
+      <Toast position="bottom" bottomOffset={20} />
     </View>
   );
 }

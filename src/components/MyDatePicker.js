@@ -17,28 +17,28 @@ export default function MyDatePicker({ label, onDateChange }) {
   const [showPicker, setShowPicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
 
-  const is18OrOlder = (selectedDate) => {
-    const currentDate = new Date();
-    const minBirthDate = new Date(
-      currentDate.getFullYear() - 18,
-      currentDate.getMonth(),
-      currentDate.getDate()
-    );
-    return selectedDate <= minBirthDate;
-  };
+  // const is18OrOlder = (selectedDate) => {
+  //   const currentDate = new Date();
+  //   const minBirthDate = new Date(
+  //     currentDate.getFullYear() - 18,
+  //     currentDate.getMonth(),
+  //     currentDate.getDate()
+  //   );
+  //   return selectedDate <= minBirthDate;
+  // };
 
   const handleConfirm = (selectedDate) => {
-    if (is18OrOlder(selectedDate)) {
+    // if (is18OrOlder(selectedDate)) {
       setShowPicker(false);
       setSelectedDate(selectedDate);
       onDateChange(selectedDate.toISOString());
-    } else {
-      Alert.alert(
-        "Edad mínima requerida",
-        "Debe tener al menos 18 años para registrarse.",
-        [{ text: "Entendido" }]
-      );
-    }
+    // } else {
+    //   Alert.alert(
+    //     "Edad mínima requerida",
+    //     "Debe tener al menos 18 años para registrarse.",
+    //     [{ text: "Entendido" }]
+    //   );
+    // }
   };
 
   const handleCancel = () => {
