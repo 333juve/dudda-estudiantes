@@ -17,54 +17,26 @@ import Toast from "react-native-toast-message";
 import Ionicons from "react-native-vector-icons/Ionicons";
 // moment
 import moment from "moment";
-// my components
+// MyComponents
 import MyButton from "../components/MyButton";
 import MyText from "../components/MyText";
 // navigation
 import { useNavigation } from "@react-navigation/native";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "../config/firebase";
-import { useSelector } from "react-redux";
+import { getLessons } from "../utils/lessonsOperations";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Checkout({ route }) {
   const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   const [repSch, setrepSch] = useState(route?.params?.repeatSchedule);
   const [newLessonFromHome] = useState(route?.params?.newLesson);
   const [unPaidLesson] = useState(route?.params?.lesson);
   let lesson = {};
-
-  //console.log("lesson from Home", lessonFromHome);
   const theme = useColorScheme();
-  console.log(route?.params);
 
-  // const calculateAmount = (length) => {
-  //   let amount = 0;
-  //   let duration = "";
-  //   if (length === 100) {
-  //     duration = "1h";
-  //     amount = 49.9;
-  //   } else if (length === 130 || length === 170) {
-  //     duration = "1h 30m";
-  //     amount = 75;
-  //   } else if (length === 200) {
-  //     duration = "2h";
-  //     amount = 99.9;
-  //   } else if (length === 230 || length === 270) {
-  //     duration = "2h 30m";
-  //     amount = 125;
-  //   } else if (length === 300) {
-  //     duration = "3h";
-  //     amount = 149.9;
-  //   }
-  //   return { amount, duration };
-  // };
-
-  // const { amount, duration } = React.useMemo(
-  //   () => calculateAmount(length),
-  //   [length]
-  // );
-  
   if (newLessonFromHome) {
     lesson = {
       startTime: newLessonFromHome?.startTime,
@@ -82,10 +54,14 @@ export default function Checkout({ route }) {
         profilePicture: user?.profilePicture,
       },
       tutor: {
-        id: newLessonFromHome?.tutor?.id,
-        firstName: newLessonFromHome?.tutor?.firstName,
-        lastName: newLessonFromHome?.tutor?.lastName,
-        profilePicture: newLessonFromHome?.tutor?.profilePicture,
+        // id: newLessonFromHome?.tutor?.id,
+        // firstName: newLessonFromHome?.tutor?.firstName,
+        // lastName: newLessonFromHome?.tutor?.lastName,
+        // profilePicture: newLessonFromHome?.tutor?.profilePicture,
+        id: "",
+        firstName: "",
+        lastName: "",
+        profilePicture: "",
       },
       videocall: "",
     };
@@ -114,7 +90,7 @@ export default function Checkout({ route }) {
       videocall: "",
     };
   }
-  
+
   const newLesson = async () => {
     if (unPaidLesson) {
       console.log("Unpaid lesson has not beed added again into firestore");
@@ -132,26 +108,37 @@ export default function Checkout({ route }) {
   console.log("Lesson Object", lesson);
 
   const spanishMonths = [
-    "Enero",
-    "Febrero",
-    "Marzo",
-    "Abril",
-    "Mayo",
-    "Junio",
-    "Julio",
-    "Agosto",
-    "Septiembre",
-    "Octubre",
-    "Noviembre",
-    "Diciembre",
+    "enero",
+    "febrero",
+    "marzo",
+    "abril",
+    "mayo",
+    "junio",
+    "julio",
+    "agosto",
+    "septiembre",
+    "octubre",
+    "noviembre",
+    "diciembre",
   ];
 
   function getSpanishDayName(dateString) {
     const [day, month, year] = dateString.split("/").map(Number);
     const date = new Date(year, month - 1, day);
-    const options = { weekday: "long" };
-    const dayName = new Intl.DateTimeFormat("es-ES", options).format(date);
-    return dayName;
+
+    const options = {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+    };
+
+    const formattedDate = new Intl.DateTimeFormat("es-ES", options).format(
+      date
+    );
+    const capitalizedDate = formattedDate.replace(/^\w/, (c) =>
+      c.toUpperCase()
+    );
+    return capitalizedDate;
   }
 
   function getDayFromDate(dateString) {
@@ -181,7 +168,8 @@ export default function Checkout({ route }) {
             return (
               <View style={{ margin: 4 }}>
                 <MyText type="caption">
-                  Fecha: {item.day},{item.date.split("/", 1)} de{" "}
+                  Fecha: {item.day},{"  "}
+                  {item.date.split("/", 1)} de{" "}
                   {spanishMonths[item.date.split("/")[1] - 1]}
                 </MyText>
                 {item.schedule.map((x) => {
@@ -197,46 +185,57 @@ export default function Checkout({ route }) {
             );
           })
         ) : unPaidLesson ? (
-          <View style={{ margin: 4 }}>
-            <MyText type="caption">
-              Fecha: {getSpanishDayName(unPaidLesson?.date)},
-              {getDayFromDate(unPaidLesson?.date)} de{" "}
-              {spanishMonths[unPaidLesson?.date.split("/")[1] - 1]}
-            </MyText>
-
-            <MyText type="caption">
-              Hora: De {unPaidLesson?.startTime} a {unPaidLesson?.endTime}
-            </MyText>
-
-            <MyText type="caption">
-              Duración:{unPaidLesson?.totalDuration}
-            </MyText>
-            <MyText type="caption">Curso: {unPaidLesson?.subject}</MyText>
+          <View>
+            {/* Date */}
+            <View style={styles.row}>
+              <MyText type="caption">Fecha</MyText>
+              <MyText type="caption">
+                {getSpanishDayName(unPaidLesson?.date)}
+              </MyText>
+            </View>
+            {/* Time */}
+            <View style={styles.row}>
+              <MyText type="caption">Hora</MyText>
+              <MyText type="caption">
+                De {unPaidLesson?.startTime} a {unPaidLesson?.endTime}
+              </MyText>
+            </View>
+            {/* Length */}
+            <View style={styles.row}>
+              <MyText type="caption">Duración</MyText>
+              <MyText type="caption">{unPaidLesson?.totalDuration}</MyText>
+            </View>
+            <View style={styles.row}>
+              <MyText type="caption">Curso</MyText>
+              <MyText type="caption">{unPaidLesson?.subject}</MyText>
+            </View>
           </View>
         ) : newLessonFromHome ? (
-          <View style={{ margin: 4 }}>
-            <MyText type="caption">Fecha: {newLessonFromHome.dateDay}</MyText>
-
-            <MyText type="caption">
-              Hora: De {newLessonFromHome.startTime} a{" "}
-              {newLessonFromHome.endTime}
-            </MyText>
-
-            <MyText type="caption">
-              Duración: {newLessonFromHome.Tduration}
-            </MyText>
-            <MyText type="caption">Curso:{newLessonFromHome.subject}</MyText>
-            <MyText style={{ fontWeight: "600" }}>
-              PEN:{newLessonFromHome.PEN}
-            </MyText>
+          <View>
+            <View style={styles.row}>
+              <MyText type="caption">Fecha</MyText>
+              <MyText type="caption">{newLessonFromHome.dateDay}</MyText>
+            </View>
+            <View style={styles.row}>
+              <MyText type="caption">Hora</MyText>
+              <MyText type="caption">
+                De {newLessonFromHome.startTime} a {newLessonFromHome.endTime}
+              </MyText>
+            </View>
+            <View style={styles.row}>
+              <MyText type="caption">Duración</MyText>
+              <MyText type="caption">{newLessonFromHome.Tduration}</MyText>
+            </View>
+            <View style={styles.row}>
+              <MyText type="caption">Curso</MyText>
+              <MyText type="caption">{newLessonFromHome.subject}</MyText>
+            </View>
           </View>
         ) : (
-          <MyText style={{ fontWeight: "600" }}>
-            OOPS ! SOMETHING WENT WRONG
-          </MyText>
+          <MyText style={{ fontWeight: "600" }}>Ups! Algo salió mal</MyText>
         )}
         <View style={styles.slotWrapper}>
-          <MyText style={{ fontWeight: "600" }}>TOTAL (PEN)</MyText>
+          <MyText style={{ fontWeight: "600" }}>Total (PEN)</MyText>
           {unPaidLesson ? (
             <MyText
               style={{ fontWeight: "600" }}
@@ -246,11 +245,11 @@ export default function Checkout({ route }) {
               style={{ fontWeight: "600" }}
             >{`PEN ${newLessonFromHome?.PEN}`}</MyText>
           )}
-          <View style={styles.divider}></View>
         </View>
+        <View style={styles.divider}></View>
         <MyText style={{ marginBottom: 20, fontSize: 16 }}>
-          Para concluir con el registro, por favor, envíanos a nuestro número de
-          WhatsApp el voucher del depósito o Yape.
+          Para concluir con el registro de la clase, por favor, envíanos a
+          nuestro número de WhatsApp el voucher del depósito o Yape.
         </MyText>
         {/* Razón social */}
         <MyText style={{ fontWeight: "700" }}>Razón Social</MyText>
@@ -315,13 +314,12 @@ export default function Checkout({ route }) {
             color={theme === "dark" ? "white" : "black"}
           />
         </TouchableOpacity>
-
-        
       </ScrollView>
       <MyButton
         title={"Confirmar"}
-        onPress={() => {
+        onPress={async () => {
           newLesson();
+          await getLessons(user.id, dispatch);
           navigation.navigate("Home");
         }}
         style={{ marginBottom: 45 }}
@@ -337,14 +335,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   header: {
-    fontSize: 24,
-    fontWeight: "bold",
+    fontSize: 25,
+    // fontWeight: "bold",
     marginVertical: 20,
   },
   slotWrapper: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 10,
+    marginVertical: 10,
   },
   boldText: {
     fontWeight: "600",
@@ -365,5 +363,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
 });

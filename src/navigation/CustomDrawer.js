@@ -30,12 +30,12 @@ function handleHelp() {
         text: "Escríbenos",
         onPress: () =>
           Linking.openURL(
-            "https://api.whatsapp.com/send?phone=51941379335&text=%C2%A1Hola!%20%C2%BFC%C3%B3mo%20est%C3%A1s%3F%20Necesito%20tu%20ayuda."
+            "https://api.whatsapp.com/send?phone=51968630898&text=%C2%A1Hola!%20%C2%BFC%C3%B3mo%20est%C3%A1s%3F%20Necesito%20tu%20ayuda."
           ),
       },
       {
         text: "Llámanos",
-        onPress: () => Linking.openURL("tel:+51941379335"),
+        onPress: () => Linking.openURL("tel:+51968630898"),
       },
       {
         text: "Cancelar",

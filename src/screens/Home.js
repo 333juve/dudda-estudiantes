@@ -44,7 +44,6 @@ import moment from "moment";
 import "moment/locale/es";
 import Entypo from "react-native-vector-icons/Entypo";
 import Colors from "../../constants/colors";
-import { setLessonsReducer } from "../features/lessonsReducer";
 
 export default function Home() {
   const user = useSelector((state) => state.user);
@@ -98,9 +97,8 @@ export default function Home() {
   }, []);
 
   async function checkFirstLaunch() {
-
-    const firstLaunch = await AsyncStorage.getItem('@firstLaunch');
-    if (firstLaunch === null) navigation.navigate('Agreement');
+    const firstLaunch = await AsyncStorage.getItem("@firstLaunch");
+    if (firstLaunch === null) navigation.navigate("Agreement");
     const token = await registerForPushNotificationsAsync();
     const location = await requestUserLocation();
     if (token !== null) {
@@ -109,7 +107,7 @@ export default function Home() {
       dispatch(resetNotificationToken(token));
       dispatch(resetLocation(location));
     }
-  };
+  }
 
   React.useEffect(() => {
     const unsubscribeLessons = onSnapshot(
@@ -151,7 +149,7 @@ export default function Home() {
       //  console.log("day", day);
       const tutorHours = x.schedule[day].hours;
       //const tutorHours = x.schedule[0].hours;
-      //console.log("tutor hours ", x.id);
+      console.log("tutor hours ", x.id);
       if (checkpoints) {
         let tutorAvailable = [];
         for (let i = 0; i < tutorHours.length; i++) {
@@ -165,6 +163,7 @@ export default function Home() {
             }
           }
         }
+        console.log("tutor available ", tutorAvailable);
         if (tutorAvailable.length >= checkpoints.length) {
           availAbleTutors.push({
             id: x.id,
@@ -174,6 +173,7 @@ export default function Home() {
           });
         }
       }
+      console.log("availAbleTutors", availAbleTutors)
     });
 
     const fullAvailableTutor = [];
@@ -192,13 +192,15 @@ export default function Home() {
               free = true;
             }
           }
+          console.log('This is the last part:', x.id)
         });
-        if (free) {
+        if (free && y.isVerified) {
           fullAvailableTutor.push(y);
         }
       });
     }
     setFreeTutors(fullAvailableTutor);
+    console.log(freetutors)
     const randomIndex = Math.floor(Math.random() * fullAvailableTutor.length);
     setSelectedTutor(fullAvailableTutor[randomIndex]);
   }
@@ -455,7 +457,7 @@ export default function Home() {
       navigation.navigate("Checkout", { lesson: lesson });
     }
   }
-  
+
   const Checkout = () => {
     let sch = [];
     let gotoCheckout = true;
@@ -467,8 +469,8 @@ export default function Home() {
     };
     const formattedDate = selectedDate.toLocaleString("es-ES", options);
     const parts = formattedDate.split(" ");
-    const weekday = parts[0];
-    const dateAndMonth = parts.slice(1).join(" ");
+    const weekday = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+    const dateAndMonth = parts.slice(1).join(" ");    
     const options2 = {
       timeZone: "UTC",
       year: "numeric",
@@ -479,7 +481,7 @@ export default function Home() {
     if (checkpoints.length < 7 && checkpoints.length >= 2) {
       if (checkpoints.length === 2) {
         sch.push({
-          dateDay: `${weekday}  ${dateAndMonth}`,
+          dateDay: `${weekday} ${dateAndMonth}`,
           date: formattedDate2,
           startTime: startTime,
           endTime: endTime,
@@ -566,88 +568,99 @@ export default function Home() {
       >
         <MyText style={styles.lessonsScheduled}>Clases programadas</MyText>
         <View>
-          {lessons.length === 0 ? (
+          {/* No lessons scheduled. */}
+          {lessons.filter((lesson) => !lesson.isCanceled).length === 0 ? (
             <MyText style={styles.default}>
               Aún no tienes ninguna clase programada.
             </MyText>
           ) : (
+            // Lessons scheduled
             <View>
-              {lessons.map((lesson) => (
-                <TouchableOpacity
-                  key={lesson.id}
-                  style={styles.classContainer(theme)}
-                  onPress={() => LessonPress(lesson)}
-                >
-                  {/* Three dots */}
+              {lessons
+                .filter((lesson) => !lesson.isCanceled)
+                .map((lesson) => (
                   <TouchableOpacity
-                    style={{
-                      alignItems: "flex-end",
-                      marginBottom: 10,
-                      height: 30,
-                      justifyContent: "center",
-                    }}
-                    onPress={() => showOptions(lesson, navigation)}
+                    key={lesson.id}
+                    style={styles.classContainer(theme)}
+                    onPress={() => LessonPress(lesson)}
                   >
-                    <Entypo
-                      name="dots-three-horizontal"
-                      size={20}
-                      color={Colors[theme].text}
-                    />
-                  </TouchableOpacity>
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <View>
-                      {lesson.tutor.profilePicture ? (
-                        <Image
-                          source={{ uri: lesson.tutor.profilePicture }}
-                          style={styles.image}
-                        />
-                      ) : (
-                        <View style={styles.fallback}>
-                          <MyText
-                            style={{ fontSize: 20, color: "#fff" }}
-                            type="caption"
-                          >
-                            {lesson.tutor.firstName.charAt(0)}
+                    {/* Three dots */}
+                    <TouchableOpacity
+                      style={{
+                        alignItems: "flex-end",
+                        marginBottom: 10,
+                        height: 30,
+                        justifyContent: "center",
+                      }}
+                      onPress={() => showOptions(lesson, navigation)}
+                    >
+                      <Entypo
+                        name="dots-three-horizontal"
+                        size={20}
+                        color={Colors[theme].text}
+                      />
+                    </TouchableOpacity>
+                    <View
+                      style={{ flexDirection: "row", alignItems: "center" }}
+                    >
+                      <View>
+                        {lesson.tutor.profilePicture ? (
+                          <Image
+                            source={{ uri: lesson.tutor.profilePicture }}
+                            style={styles.image}
+                          />
+                        ) : (
+                          <View style={styles.fallback}>
+                            <MyText
+                              style={{ fontSize: 20, color: "#fff" }}
+                              type="caption"
+                            >
+                              {/* {lesson.tutor.firstName.charAt(0)} */}
+                              P
+                            </MyText>
+                          </View>
+                        )}
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          {/* Date */}
+                          <MyText type="caption">
+                            {moment(lesson.date, "DD/MM/YYYY")
+                              .format("dddd, DD MMMM")
+                              .replace(/^\w/, (c) => c.toUpperCase())}
+                          </MyText>
+                          {/* Start and end time */}
+                          <MyText type="caption">
+                            {lesson.startTime} - {lesson.endTime}
                           </MyText>
                         </View>
-                      )}
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <MyText type="caption">
-                          {moment(lesson.date, "DD/MM/YYYY")
-                            .format("dddd, DD MMMM")
-                            .replace(/^\w/, (c) => c.toUpperCase())}
-                        </MyText>
-                        <MyText type="caption">
-                          {lesson.startTime} - {lesson.endTime}
-                        </MyText>
-                      </View>
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                          marginTop: 5,
-                        }}
-                      >
-                        <MyText type="caption">
-                          {lesson.isPaid
-                            ? `${lesson.tutor.firstName} ${lesson.tutor.lastName}`
-                            : "Pago pendiente"}
-                        </MyText>
-                        <MyText type="caption" style={{ color: "#0071BC" }}>
-                          {lesson.subject}
-                        </MyText>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            marginTop: 5,
+                          }}
+                        >
+                          {/* First and last name */}
+                          <MyText type="caption">
+                            {lesson.isPaid
+                              ? `${lesson.tutor.firstName} ${lesson.tutor.lastName}`
+                              : "Pago pendiente"}
+                          </MyText>
+                          {/* Subject */}
+                          <MyText type="caption" style={{ color: "#0071BC" }}>
+                            {lesson.subject}
+                          </MyText>
+                        </View>
                       </View>
                     </View>
-                  </View>
-                </TouchableOpacity>
-              ))}
+                  </TouchableOpacity>
+                ))}
             </View>
           )}
           <BottomSheetModal
@@ -922,35 +935,36 @@ export default function Home() {
                     startTime,
                     endTime
                   )}
-                  onPress={async () => {
-                    setIsSearching(true);
-                    await findTutor();
-                    setIsSearching(false);
+                  // onPress={async () => {
+                  //   setIsSearching(true);
+                  //   await findTutor();
+                  //   setIsSearching(false);
 
-                    if (!selectedTutor) {
-                      Alert.alert(
-                        "No se encontraron tutores",
-                        "Por favor, intente un horario diferente o contacte al soporte.",
-                        [
-                          {
-                            text: "Soporte",
-                            onPress: () =>
-                              Linking.openURL(
-                                "https://api.whatsapp.com/send?phone=51941379335&text=%C2%A1Hola!%20%C2%BFC%C3%B3mo%20est%C3%A1s%3F%20Necesito%20tu%20ayuda."
-                              ),
-                          },
-                          {
-                            text: "Descartar",
-                            onPress: () => {},
-                            style: "cancel",
-                          },
-                        ],
-                        { cancelable: true }
-                      );
-                    } else {
-                      Checkout();
-                    }
-                  }}
+                  //   if (!selectedTutor) {
+                  //     Alert.alert(
+                  //       "No se encontraron tutores",
+                  //       "Por favor, intente un horario diferente o contacte al soporte.",
+                  //       [
+                  //         {
+                  //           text: "Soporte",
+                  //           onPress: () =>
+                  //             Linking.openURL(
+                  //               "https://api.whatsapp.com/send?phone=51968630898&text=%C2%A1Hola!%20%C2%BFC%C3%B3mo%20est%C3%A1s%3F%20Necesito%20tu%20ayuda."
+                  //             ),
+                  //         },
+                  //         {
+                  //           text: "Descartar",
+                  //           onPress: () => {},
+                  //           style: "cancel",
+                  //         },
+                  //       ],
+                  //       { cancelable: true }
+                  //     );
+                  //   } else {
+                  //     Checkout();
+                  //   }
+                  // }}
+                  onPress={() => Checkout()}
                 >
                   {isLoading ? (
                     <Text style={{ color: "white", fontSize: 20 }}>
@@ -1030,8 +1044,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderBottomColor:
       theme === "dark"
-        ? "rgba(224, 224, 224, 0.2)"
-        : "rgba(128, 128, 128, 0.2)",
+        ? "rgba(224, 224, 224, 0.1)"
+        : "rgba(128, 128, 128, 0.1)",
   }),
   default: {
     marginTop: 20,
@@ -1077,7 +1091,7 @@ const styles = StyleSheet.create({
   pickSubject: (theme) => ({
     justifyContent: "space-between",
     flexDirection: "row",
-    backgroundColor: theme === "dark" ? "rgba(128, 128, 128, 0.2)" : "#EAEAEA",
+    backgroundColor: theme === "dark" ? "rgba(128, 128, 128, 0.1)" : "#EAEAEA",
     width: "100%",
     borderRadius: 7,
     paddingHorizontal: 20,
@@ -1088,7 +1102,7 @@ const styles = StyleSheet.create({
   pickDate: (theme) => ({
     justifyContent: "space-between",
     flexDirection: "row",
-    backgroundColor: theme === "dark" ? "rgba(128, 128, 128, 0.2)" : "#EAEAEA",
+    backgroundColor: theme === "dark" ? "rgba(128, 128, 128, 0.1)" : "#EAEAEA",
     width: "100%",
     borderRadius: 7,
     paddingHorizontal: 20,
@@ -1144,7 +1158,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   thirdStyle: (theme) => ({
-    backgroundColor: theme === "dark" ? "rgba(128, 128, 128, 0.2)" : "#EAEAEA",
+    backgroundColor: theme === "dark" ? "rgba(128, 128, 128, 0.1)" : "#EAEAEA",
     borderRadius: 7,
     marginRight: 10,
     height: 50,
@@ -1153,7 +1167,7 @@ const styles = StyleSheet.create({
     width: 110,
   }),
   fourthStyle: (theme) => ({
-    backgroundColor: theme === "dark" ? "rgba(128, 128, 128, 0.2)" : "#EAEAEA",
+    backgroundColor: theme === "dark" ? "rgba(128, 128, 128, 0.1)" : "#EAEAEA",
     borderRadius: 7,
     marginRight: 10,
     height: 50,

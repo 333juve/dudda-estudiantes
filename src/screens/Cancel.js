@@ -32,7 +32,7 @@ export default function Cancel({ route }) {
   const getNotificationToken = async (tutorId) => {
     const docRef = doc(db, "tutors", tutorId);
     const docSnap = await getDoc(docRef);
-  
+
     if (docSnap.exists()) {
       return docSnap.data().notificationToken;
     } else {
@@ -40,7 +40,6 @@ export default function Cancel({ route }) {
       return null;
     }
   };
-  
 
   const message = {
     to: `${lesson.tutor.notificationToken}`,
@@ -66,12 +65,15 @@ export default function Cancel({ route }) {
             try {
               await updateDoc(doc(db, "lessons", lesson.id), {
                 isCanceled: true,
+                reason: reason
               });
-              const notificationToken = await getNotificationToken(lesson.tutor.id);
-              if (notificationToken) {
-                message.to = notificationToken;
-              }
-              await sendPushNotificationExpo(message);
+              // const notificationToken = await getNotificationToken(
+              //   lesson.tutor.id
+              // );
+              // if (notificationToken) {
+              //   message.to = notificationToken;
+              // }
+              // await sendPushNotificationExpo(message);
               await getLessons(user.id, dispatch);
               navigation.navigate("Home");
             } catch (error) {
@@ -87,22 +89,11 @@ export default function Cancel({ route }) {
 
   return (
     <View style={styles.container}>
-      <MyText type="title">¿Cancelar clase?</MyText>
+      <MyText style={styles.title}>Cancelar clase</MyText>
       <View style={{ marginTop: 20 }}>
-        <View
-          style={{
-            flexDirection: "row",
-            backgroundColor:
-              theme === "dark"
-                ? "rgba(224, 224, 224, 0.2)"
-                : "rgba(128, 128, 128, 0.2)",
-            justifyContent: "space-between",
-            paddingHorizontal: 10,
-            paddingVertical: 20,
-            borderRadius: 7,
-          }}
-        >
-          <View style={{ flexDirection: "row" }}>
+        <View style={styles.lessonDetails(theme)}>
+          {/* Profile picture */}
+          <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
             {lesson.tutor.profilePicture ? (
               <Image
                 source={{ uri: lesson.tutor.profilePicture }}
@@ -115,24 +106,30 @@ export default function Cancel({ route }) {
                 </MyText>
               </View>
             )}
-            <View>
-              <MyText>
+
+            <View style={{ flexGrow: 1 }}>
+              {/* Date */}
+              <MyText type="caption" style={{ marginBottom: 5 }}>
                 {moment(lesson.date, "DD/MM/YYYY")
                   .locale("es")
-                  .format("dddd DD MMMM")
+                  .format("dddd, DD [de] MMMM")
                   .replace(/^\w/, (c) => c.toUpperCase())}
               </MyText>
 
-              <MyText>
+              {/* First and last name */}
+              <MyText type="caption">
                 {lesson.tutor.firstName} {lesson.tutor.lastName}
               </MyText>
             </View>
           </View>
-          <View>
-            <MyText>
+
+          <View style={{ flex: 1, alignItems: "flex-end" }}>
+            {/* Time */}
+            <MyText type="caption" style={{ marginBottom: 5 }}>
               {lesson.startTime} - {lesson.endTime}
             </MyText>
-            <MyText>{lesson.subject}</MyText>
+            {/* Subject */}
+            <MyText type="caption">{lesson.subject}</MyText>
           </View>
         </View>
       </View>
@@ -142,19 +139,7 @@ export default function Cancel({ route }) {
           Explícanos la razón de la cancelación.
         </MyText>
         <TextInput
-          style={{
-            height: 200,
-            backgroundColor:
-              theme === "dark"
-                ? "rgba(224, 224, 224, 0.2)"
-                : "rgba(128, 128, 128, 0.2)",
-            borderRadius: 7,
-            paddingTop: 10,
-            paddingLeft: 10,
-            textAlignVertical: "top",
-            fontSize: 16,
-            color: theme === "dark" ? "white" : "black",
-          }}
+          style={styles.reason(theme)}
           placeholder={"Escribe aquí..."}
           placeholderTextColor={theme === "dark" ? "white" : "black"}
           multiline
@@ -164,7 +149,10 @@ export default function Cancel({ route }) {
         />
       </View>
       <View style={styles.buttonContainer}>
-        <MyButton title="Cancelar clase" onPress={() => handleCancelLesson(lesson)} />
+        <MyButton
+          title="Cancelar clase"
+          onPress={() => handleCancelLesson(lesson)}
+        />
       </View>
     </View>
   );
@@ -174,6 +162,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginHorizontal: 10,
+  },
+  title: {
+    fontSize: 25,
+    marginLeft: 10,
+    marginTop: 30,
   },
   image: {
     width: 50,
@@ -198,4 +191,28 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: "center",
   },
+  reason: (theme) => ({
+    height: 200,
+    backgroundColor:
+      theme === "dark"
+        ? "rgba(224, 224, 224, 0.1)"
+        : "rgba(128, 128, 128, 0.1)",
+    borderRadius: 7,
+    paddingTop: 10,
+    paddingLeft: 10,
+    textAlignVertical: "top",
+    fontSize: 16,
+    color: theme === "dark" ? "white" : "black",
+  }),
+  lessonDetails: (theme) => ({
+    flexDirection: "row",
+    backgroundColor:
+      theme === "dark"
+        ? "rgba(224, 224, 224, 0.1)"
+        : "rgba(128, 128, 128, 0.1)",
+    justifyContent: "space-between",
+    paddingHorizontal: 15,
+    paddingVertical: 20,
+    borderRadius: 7,
+  }),
 });

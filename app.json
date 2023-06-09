@@ -2,7 +2,7 @@
   "expo": {
     "name": "Dudda",
     "slug": "dudda-estudiantes",
-    "version": "1.0.3",
+    "version": "1.0.7",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -17,7 +17,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "appp.dudda.dudda",
-      "buildNumber": "4",
+      "buildNumber": "7",
       "infoPlist": {
         "NSLocationUsageDescription": "Dudda necesita permiso para acceder a tu ubicación para conectarte a los tutores más cercanos a ti.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "Dudda necesita permiso para acceder a tu ubicación para conectarte a los tutores más cercanos a ti.",

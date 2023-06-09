@@ -3,23 +3,15 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { initializeAuth, getAuth } from "firebase/auth";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import {
-  RN_EXPO_FIREBASE_APIKEY,
-  RN_EXPO_FIREBASE_AUTH_DOMAIN,
-  RN_EXPO_FIREBASE_PROJECTID,
-  RN_EXPO_FIREBASE_STORAGEBUCKET,
-  RN_EXPO_FIREBASE_MESSAGINGSENDERID,
-  RN_EXPO_FIREBASE_APPID,
-  RN_EXPO_FIREBASE_MEASUREMENTID,
-} from "@env";
+
 const firebaseConfig = {
-  apiKey: RN_EXPO_FIREBASE_APIKEY,
-  authDomain: RN_EXPO_FIREBASE_AUTH_DOMAIN,
-  projectId: RN_EXPO_FIREBASE_PROJECTID,
-  storageBucket: RN_EXPO_FIREBASE_STORAGEBUCKET,
-  messagingSenderId: RN_EXPO_FIREBASE_MESSAGINGSENDERID,
-  appId: RN_EXPO_FIREBASE_APPID,
-  measurementId: RN_EXPO_FIREBASE_MEASUREMENTID,
+  apiKey: "AIzaSyC2tT3WcLmbGWHw2Km7HTUSbZaunvbdYSU",
+  authDomain: "dudda-3f55b.firebaseapp.com",
+  projectId: "dudda-3f55b",
+  storageBucket: "dudda-3f55b.appspot.com",
+  messagingSenderId: "295815088021",
+  appId: "1:295815088021:web:103e3c54012711ca5e589c",
+  measurementId: "G-XX8XKPQX0E"
 };
 
 let app = initializeApp(firebaseConfig);

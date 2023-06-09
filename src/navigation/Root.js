@@ -156,10 +156,24 @@ function HomeStack() {
           ),
           headerTitle: () => <LogoDarkOg width="90" height="30" />,
           headerRight: () => (
-            <NotificationIcon
-              navigation={navigation}
-              unSeenNotifications={unSeenNotifications}
-            />
+            <>
+              {/* <TouchableOpacity
+                onPress={() =>
+                  Alert.alert("¡Pronto disponible!", "Estamos trabajando...")
+                }
+              >
+                <Ionicons
+                  name="person-add"
+                  size={20}
+                  color={"white"}
+                  style={{ marginRight: 20 }}
+                />
+              </TouchableOpacity> */}
+              <NotificationIcon
+                navigation={navigation}
+                unSeenNotifications={unSeenNotifications}
+              />
+            </>
           ),
         }}
       />
@@ -187,19 +201,16 @@ function HomeStack() {
           headerBackTitle: "Atrás",
         }}
       />
-      <Stack.Screen
-        name="Programar"
-        component={Reschedule}              
-      />
+      <Stack.Screen name="Programar" component={Reschedule} />
       <Stack.Screen
         name="Historial"
         component={Historial}
         options={{
           headerShown: true,
           title: "Historial",
-          headerTintColor: "#fff",          
-          headerBackTitle: "Atrás",                 
-        }}        
+          headerTintColor: "#fff",
+          headerBackTitle: "Atrás",
+        }}
       />
       <Stack.Screen
         name="Cancelar"
@@ -207,19 +218,17 @@ function HomeStack() {
         options={{
           headerShown: true,
           title: "Cancelar",
-          headerTintColor: "#fff",          
-          headerBackTitle: "Atrás",                 
-        }}        
+          headerTintColor: "#fff",
+          headerBackTitle: "Atrás",
+        }}
       />
       <Stack.Screen
         name="Checkout"
         component={Checkout}
-        options={{          
+        options={{
           title: "Pagar",
-          headerTintColor: "#fff",                                               
-          
-        }}        
-        
+          headerTintColor: "#fff",
+        }}
       />
     </Stack.Navigator>
   );

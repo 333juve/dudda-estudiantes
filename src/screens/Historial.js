@@ -59,16 +59,18 @@ export default function Historial() {
               </MyText>
             </View>
           )}
-          <View style={{ marginLeft: 20 }}>
+          <View style={{ marginLeft: 20,  flexDirection: "column", flexWrap: "wrap" }}>
             <MyText>
               {lesson.tutor.firstName} {lesson.tutor.lastName}
             </MyText>
             <MyText type="caption" style={{ color: "#2F95DC" }}>
               {lesson.subject}
             </MyText>
-            <MyText type="caption">
-              Últ. clase: {lesson.date}, de {lesson.startTime} a {lesson.endTime}
-            </MyText>
+            
+    <MyText type="caption" style={{ width: "100%" }}>
+      Últ. clase: {lesson.date}, de {lesson.startTime} a {lesson.endTime}
+    </MyText>
+  
           </View>
         </View>
       </TouchableOpacity>
@@ -191,8 +193,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   image: {
-    width: 45,
-    height: 45,
+    width: 50,
+    height: 50,
     borderRadius: 50,
   },
   fallback: {
@@ -201,8 +203,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    height: 45,
-    width: 45,
+    height: 50,
+    width: 50,
   },
   button: {
     backgroundColor: "red",

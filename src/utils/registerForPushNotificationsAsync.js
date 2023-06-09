@@ -35,10 +35,10 @@ export async function registerForPushNotificationsAsync() {
       );
     }
   } else {
-    Alert.alert(
-      'Physical Device Required',
-      'Push notifications can only be configured on a physical device.'
-    );
+    // Alert.alert(
+    //   'Physical Device Required',
+    //   'Push notifications can only be configured on a physical device.'
+    // );
     return null;
   }
 
