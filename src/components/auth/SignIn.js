@@ -9,6 +9,11 @@ import Colors from "../../../constants/colors";
 export default function SignIn() {
   const { setAuthState, setEmail, setPassword, handleSignIn, isLoading } =
     React.useContext(AuthContext);
+  const [showPassword, setShowPassword] = React.useState(false);
+
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   return (
     <React.Fragment>
@@ -24,7 +29,11 @@ export default function SignIn() {
       <MyInput
         label={"Contraseña"}
         onChangeText={setPassword}
-        secureTextEntry
+        secureTextEntry={!showPassword}
+        autoCapitalize="none"
+        autoCorrect={false}
+        showIcon={true}
+        onIconPress={toggleShowPassword}
       />
       <Pressable onPress={() => setAuthState("forgotPassword")}>
         <MyText

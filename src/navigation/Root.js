@@ -7,6 +7,7 @@ import {
   Text,
   Linking,
   useColorScheme,
+  Button
 } from "react-native";
 //React Navigation
 import {
@@ -37,19 +38,24 @@ import Onboarding from "../screens/Onboarding";
 import Checkout from "../screens/Checkout";
 import Agreement from "../screens/Agreement";
 import Historial from "../screens/Historial";
+import ModalScreen from "../screens/modalScreen";
 import Cancel from "../screens/Cancel";
 import NotificationIcon from "../components/notifications/NotificationIcon";
 import { useSelector } from "react-redux";
+import AddLessonInformation from "../screens/addLessonInfor";
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
-
+const RootStack = createNativeStackNavigator();
 export default function Root() {
   const theme = useColorScheme();
 
   return (
     <NavigationContainer theme={theme === "dark" ? DarkTheme : DefaultTheme}>
-      <MyDrawer />
+      <RootStack.Navigator mode="modal" headerMode="none">
+        <RootStack.Screen name="Main" component={MyDrawer} options={{headerShown:false}} />
+        <RootStack.Screen name="MyModal" component={ModalScreen} options={{headerShown:false}} />
+      </RootStack.Navigator>
     </NavigationContainer>
   );
 }
@@ -211,6 +217,16 @@ function HomeStack() {
           headerBackTitle: "Atrás",                 
         }}        
       />
+       <Stack.Screen
+        name="AddLessonInformation"
+        component={AddLessonInformation}
+        options={{          
+          title: "Lesson Information",
+          headerTintColor: "#fff",                                               
+          
+        }}        
+        
+      />
       <Stack.Screen
         name="Checkout"
         component={Checkout}
@@ -224,29 +240,3 @@ function HomeStack() {
     </Stack.Navigator>
   );
 }
-
-const styles = StyleSheet.create({
-  image: {
-    width: 60,
-    height: 60,
-    borderRadius: "50%",
-    marginHorizontal: 10,
-  },
-  fallback: {
-    backgroundColor: "lightcoral",
-    width: 60,
-    height: 60,
-    borderRadius: "50%",
-    marginHorizontal: 10,
-  },
-  initialLetter: {
-    fontSize: 30,
-    justifyContent: "center",
-    alignSelf: "center",
-    color: "white",
-  },
-  badge: {
-    backgroundColor: "red",
-    borderRadius: 5,
-  },
-});

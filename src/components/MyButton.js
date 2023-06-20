@@ -42,13 +42,14 @@ import {
   
   const styles = StyleSheet.create({
     button: {
-      width: "100%",
+      width: "90%",
       height: 50,
       padding: 10,
       marginVertical: 10,
       borderRadius: 8,
       alignItems: "center",
       justifyContent: "center",
+      alignSelf:'center'
     },
     primaryLight: {
       backgroundColor: Colors.light.button,

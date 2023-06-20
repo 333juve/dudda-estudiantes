@@ -29,6 +29,7 @@ const AuthContext = React.createContext({
   lastName: "",
   setLastName: () => {},
   password: "",
+  setSex: () => {},
   setPassword: () => {},
   phoneNumber: "",
   setPhoneNumber: () => {},
@@ -54,16 +55,20 @@ function AuthProvider({ children }) {
   const [password, setPassword] = React.useState("");
   const [verificationCode, setVerificationCode] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
+  const [sex, setSex] = React.useState("");
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
+  const [countryCode, setCC] = React.useState(null);
+  const [countryName, setCN] = React.useState(null);
+  const [countryFlag, setCF] = React.useState(null);
   const formatDate = (date) => {
     return moment(date).format("DD/MM/YYYY");
   };
 
   async function handleSignIn() {
     const trimmedEmail = email.trim();
-    
+
     if (!trimmedEmail || !password) {
       Alert.alert(
         "Información incompleta",
@@ -84,6 +89,7 @@ function AuthProvider({ children }) {
               createdAt: docSnap.data().createdAt,
               email: docSnap.data().email.toLowerCase(),
               firstName: docSnap.data().firstName,
+              country: docSnap.data()?.country,
               id: docSnap.id,
               lastName: docSnap.data().lastName,
               latitude: docSnap.data().latitude,
@@ -127,7 +133,7 @@ function AuthProvider({ children }) {
         setIsLoading(false);
       }
     }
-  };
+  }
 
   async function handleSignUp() {
     const trimmedEmail = email.trim();
@@ -138,6 +144,7 @@ function AuthProvider({ children }) {
       !firstName ||
       !lastName ||
       !phoneNumber ||
+      !countryCode ||
       !birthday
     ) {
       Alert.alert(
@@ -180,7 +187,7 @@ function AuthProvider({ children }) {
       console.log(e);
       setIsLoading(false);
     }
-  };
+  }
 
   async function handleForgotPassword() {
     if (!email) {
@@ -212,15 +219,15 @@ function AuthProvider({ children }) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
-  async function handleResetPassword() {};
+  async function handleResetPassword() {}
 
-  async function handleResendVerificationCode() {};
+  async function handleResendVerificationCode() {}
 
   async function saveUserToDatabase(user) {
     const trimmedEmail = email.trim();
-    
+
     const userToSave = {
       birthday: formatDate(birthday),
       createdAt: new Date().toDateString(),
@@ -230,9 +237,15 @@ function AuthProvider({ children }) {
       lastName: lastName,
       latitude: null,
       longitude: null,
+      sex: sex,
       notificationToken: null,
       phoneNumber: phoneNumber,
       profilePicture: null,
+      country: {
+        countryCode: countryCode,
+        countryName: countryName,
+        countryFlag: countryFlag,
+      },
     };
     try {
       await setDoc(doc(db, "students", user.uid), userToSave);
@@ -241,7 +254,7 @@ function AuthProvider({ children }) {
     } catch (e) {
       console.log("Error saving user", e);
     }
-  };
+  }
 
   return (
     <Provider
@@ -270,6 +283,10 @@ function AuthProvider({ children }) {
         handleResendVerificationCode,
         handleSignIn,
         handleSignUp,
+        setSex,
+        setCC,
+        setCN,
+        setCF,
       }}
     >
       {children}

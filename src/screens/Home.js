@@ -45,6 +45,7 @@ import "moment/locale/es";
 import Entypo from "react-native-vector-icons/Entypo";
 import Colors from "../../constants/colors";
 import { setLessonsReducer } from "../features/lessonsReducer";
+import MyButton from "../components/MyButton";
 
 export default function Home() {
   const user = useSelector((state) => state.user);
@@ -98,18 +99,17 @@ export default function Home() {
   }, []);
 
   async function checkFirstLaunch() {
-
-    const firstLaunch = await AsyncStorage.getItem('@firstLaunch');
-    if (firstLaunch === null) navigation.navigate('Agreement');
-    const token = await registerForPushNotificationsAsync();
-    const location = await requestUserLocation();
-    if (token !== null) {
-      await updateUserLocation(user.id, location);
-      await updateUserNotificationToken(user.id, token);
-      dispatch(resetNotificationToken(token));
-      dispatch(resetLocation(location));
-    }
-  };
+    const firstLaunch = await AsyncStorage.getItem("@firstLaunch");
+    if (firstLaunch === null) navigation.navigate("Agreement");
+    // const token = await registerForPushNotificationsAsync();
+    // const location = await requestUserLocation();
+    // if (token !== null) {
+    //await updateUserLocation(user.id, location);
+    // await updateUserNotificationToken(user.id, token);
+    //dispatch(resetNotificationToken(token));
+    //  dispatch(resetLocation(location));
+    //}
+  }
 
   React.useEffect(() => {
     const unsubscribeLessons = onSnapshot(
@@ -146,61 +146,65 @@ export default function Home() {
 
   async function findTutor() {
     const availAbleTutors = [];
-    console.log("Selected day", selectedDate?.getDay());
-    tutorSchedule?.forEach((x) => {
-      //  console.log("day", day);
-      const tutorHours = x.schedule[day].hours;
-      //const tutorHours = x.schedule[0].hours;
-      //console.log("tutor hours ", x.id);
-      if (checkpoints) {
-        let tutorAvailable = [];
-        for (let i = 0; i < tutorHours.length; i++) {
-          for (let j = 0; j < checkpoints.length; j++) {
-            if (
-              tutorHours[i].startTime === checkpoints[j].startTime &&
-              tutorHours[i].endTime === checkpoints[j].endTime &&
-              tutorHours[i].isFree === true
-            ) {
-              tutorAvailable.push(1);
-            }
-          }
-        }
-        if (tutorAvailable.length >= checkpoints.length) {
-          availAbleTutors.push({
-            id: x.id,
-            firstName: x.firstName,
-            lastName: x.lastName,
-            profilePicture: x.profilePicture,
-          });
-        }
-      }
-    });
+    // console.log("Selected day", selectedDate?.getDay());
+    // tutorSchedule?.forEach((x) => {
+    //   //  console.log("day", day);
+    //   const tutorHours = x.schedule[day].hours;
+    //   //const tutorHours = x.schedule[0].hours;
+    //   console.log("tutor hours ", x.id);
+    //   if (checkpoints) {
+    //     let tutorAvailable = [];
+    //     for (let i = 0; i < tutorHours.length; i++) {
+    //       for (let j = 0; j < checkpoints.length; j++) {
+    //         if (
+    //           tutorHours[i].startTime === checkpoints[j].startTime &&
+    //           tutorHours[i].endTime === checkpoints[j].endTime &&
+    //           tutorHours[i].isFree === true
+    //         ) {
+    //           tutorAvailable.push(1);
+    //         }
+    //       }
+    //     }
+    //     console.log("tutor available ", tutorAvailable);
+    //     if (tutorAvailable.length >= checkpoints.length) {
+    //       availAbleTutors.push({
+    //         id: x.id,
+    //         firstName: x.firstName,
+    //         lastName: x.lastName,
+    //         profilePicture: x.profilePicture,
+    //       });
+    //     }
+    //   }
+    //   console.log("availAbleTutors", availAbleTutors);
+    // });
 
-    const fullAvailableTutor = [];
-    if (endTime) {
-      availAbleTutors.forEach((y) => {
-        let free = false;
-        lessonScheduleData?.forEach((x) => {
-          if (x.id) {
-            if (
-              x.tutor.id === y.id &&
-              x.startTime === startTime &&
-              x.endTime === endTime &&
-              x.date === selectedDate.toLocaleDateString("en-GB")
-            ) {
-            } else {
-              free = true;
-            }
-          }
-        });
-        if (free) {
-          fullAvailableTutor.push(y);
-        }
-      });
-    }
-    setFreeTutors(fullAvailableTutor);
-    const randomIndex = Math.floor(Math.random() * fullAvailableTutor.length);
-    setSelectedTutor(fullAvailableTutor[randomIndex]);
+    // const fullAvailableTutor = [];
+    // if (endTime) {
+    //   availAbleTutors.forEach((y) => {
+    //     let free = false;
+    //     lessonScheduleData?.forEach((x) => {
+    //       if (x.id) {
+    //         if (
+    //           x.tutor.id === y.id &&
+    //           x.startTime === startTime &&
+    //           x.endTime === endTime &&
+    //           x.date === selectedDate.toLocaleDateString("en-GB")
+    //         ) {
+    //         } else {
+    //           free = true;
+    //         }
+    //       }
+    //       console.log("This is the last part:", x.id);
+    //     });
+    //     if (free && y.isVerified) {
+    //       fullAvailableTutor.push(y);
+    //     }
+    //   });
+    // }
+    // setFreeTutors(fullAvailableTutor);
+    // console.log(freetutors);
+    // const randomIndex = Math.floor(Math.random() * fullAvailableTutor.length);
+    // setSelectedTutor(fullAvailableTutor[randomIndex]);
   }
 
   React.useEffect(() => {
@@ -467,7 +471,7 @@ export default function Home() {
     };
     const formattedDate = selectedDate.toLocaleString("es-ES", options);
     const parts = formattedDate.split(" ");
-    const weekday = parts[0];
+    const weekday = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
     const dateAndMonth = parts.slice(1).join(" ");
     const options2 = {
       timeZone: "UTC",
@@ -565,6 +569,14 @@ export default function Home() {
         }
       >
         <MyText style={styles.lessonsScheduled}>Clases programadas</MyText>
+        <MyButton
+          onPress={() => navigation.navigate("MyModal")}
+          title="Open Modal"
+        />
+         <MyButton
+          onPress={() => navigation.navigate("AddLessonInformation")}
+          title="AddLessonInformation"
+        />
         <View>
           {lessons.length === 0 ? (
             <MyText style={styles.default}>
