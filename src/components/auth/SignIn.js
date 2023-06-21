@@ -5,6 +5,7 @@ import MyText from "../MyText";
 import { Pressable } from "react-native";
 import { AuthContext } from "../../context/AuthContext";
 import Colors from "../../../constants/colors";
+import { i18n } from "../../../languages";
 
 export default function SignIn() {
   const { setAuthState, setEmail, setPassword, handleSignIn, isLoading } =
@@ -18,16 +19,16 @@ export default function SignIn() {
   return (
     <React.Fragment>
       <MyText type="title" style={{ marginBottom: 30 }}>
-        Iniciar sesión
+      {i18n.t("login")}
       </MyText>
       <MyInput
-        label={"Correo electrónico"}
+        label= {i18n.t("email")}
         onChangeText={setEmail}
         autoCapitalize="none"
         autoCorrect={false}
       />
       <MyInput
-        label={"Contraseña"}
+        label= {i18n.t("password")}
         onChangeText={setPassword}
         secureTextEntry={!showPassword}
         autoCapitalize="none"
@@ -45,17 +46,17 @@ export default function SignIn() {
           }}
           type="caption"
         >
-          ¿Olvidaste tu contraseña?
+         {i18n.t("forgetPassword")}
         </MyText>
       </Pressable>
       <MyButton
-        title={isLoading ? "Cargando..." : "Iniciar sesión"}
+        title={isLoading ? `${i18n.t("loading")}`: `${i18n.t("login")}`}
         disabled={isLoading ? true : false}
         onPress={handleSignIn}
         style={{ marginTop: 20 }}
       />
       <MyButton
-        title={"Retroceder"}
+        title= {i18n.t("back")}
         type="secondary"
         onPress={() => setAuthState("default")}
       />

@@ -6,6 +6,7 @@ import { AuthContext } from "../../context/AuthContext";
 import LogoLight from "../../../assets/logoLight.svg";
 import LogoDark from "../../../assets/logoDark.svg";
 import { useColorScheme, View } from "react-native";
+import { i18n } from "../../../languages";
 
 export default function DefaultAuth() {
   const { setAuthState } = React.useContext(AuthContext);
@@ -20,10 +21,10 @@ export default function DefaultAuth() {
           <LogoLight height={120} width={190} />
         )}
       </View>
-      <MyButton title="Registrarme" onPress={() => setAuthState("signUp")} />
+      <MyButton title={i18n.t('signup')} onPress={() => setAuthState("signUp")} />
       <MyButton
         type="secondary"
-        title="Iniciar sesión"
+        title={i18n.t("login")}
         onPress={() => setAuthState("signIn")}
       />
     </React.Fragment>

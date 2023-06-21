@@ -55,13 +55,15 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Dudda requiere acceso a tu ubicación para poder conectarte a los tutores más cercanos a ti."
         }
-      ],      [
+      ],
+      [
         "expo-notifications",
         {
           "icon": "./assets/icon.png",
           "color": "#ffffff"
         }
-      ]
+      ],
+      "expo-localization"
     ],
     "extra": {
       "eas": {

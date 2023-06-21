@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import NotificationCard from "../components/notifications/NotificationCard";
 import { getNotifications } from "../utils/notificationsOperations";
 import MyText from "../components/MyText";
+import { i18n } from "../../languages";
 
 export default function NotificationsScreen() {
   const { notifications } = useSelector((state) => state.notifications);
@@ -27,7 +28,7 @@ export default function NotificationsScreen() {
       >
         {notifications.length === 0 ? (
           <MyText style={styles.default}>
-            Aún no tienes ninguna notificación.
+           {i18n.t('noNotification')}
           </MyText>
         ) : (
           notifications.map((notification) => (

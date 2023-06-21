@@ -32,6 +32,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import * as Location from "expo-location";
 import * as Notifications from "expo-notifications";
+import { i18n } from "../../../languages";
 
 export default function ProfilePermissions() {
   const user = useSelector((state) => state.user);
@@ -50,16 +51,16 @@ export default function ProfilePermissions() {
   async function handleToggleLocation() {
     if (isLocationSwitchEnabled) {
       Alert.alert(
-        "Desactivar ubicación",
-        "¿Estás seguro de que deseas desactivar la ubicación?",
+        `${i18n.t('disableLocation')}`,
+        `${i18n.t('disableLocation')}`,
         [
           {
-            text: "Cancelar",
+            text: `${i18n.t('cancel')}`,
             onPress: () => console.log("Cancelar apretado"),
             style: "cancel",
           },
           {
-            text: "Desactivar",
+            text: `${i18n.t('disableLocation')}`,
             onPress: async () => {
               setIsLocationSwitchEnabled(false);
               setIsLocationEnabled(false);
@@ -90,16 +91,16 @@ export default function ProfilePermissions() {
   async function handleToggleNotifications() {
     if (isNotificationSwitchEnabled) {
       Alert.alert(
-        "Desactivar notificaciones",
-        "¿Estás seguro de que deseas desactivar las notificaciones?",
+        `${i18n.t('turnOffNotification')}`,
+        `${i18n.t('turnOffNotificationDesc')}`,
         [
           {
-            text: "Cancelar",
+            text: `${i18n.t('cancel')}`,
             onPress: () => console.log("Cancelar apretado"),
             style: "cancel",
           },
           {
-            text: "Desactivar",
+            text: `${i18n.t('turnOffNotification')}`,
             onPress: async () => {
               setIsNotificationSwitchEnabled(!isNotificationSwitchEnabled);
               if (isDevice) {
@@ -132,16 +133,16 @@ export default function ProfilePermissions() {
 
   async function handleSignOut() {
     Alert.alert(
-      "Cerrar sesión",
-      "¿Estás seguro de que quieres cerrar sesión?",
+      `${i18n.t("logout")}`,
+      `${i18n.t("confirmLogout")}`,
       [
         {
-          text: "Cancelar",
+          text: `${i18n.t("cancel")}`,
           onPress: () => console.log("Cancelar apretado"),
           style: "cancel",
         },
         {
-          text: "Cerrar sesión",
+          text: `${i18n.t("logout")}`,
           onPress: async () => {
             try {
               await logoutUser(dispatch);
@@ -163,16 +164,16 @@ export default function ProfilePermissions() {
     setIsLoading
   ) {
     Alert.alert(
-      "Eliminar cuenta",
-      "Tu información se eliminará de manera permanente, no es posible revertir esta acción.",
+      `${i18n.t('deleteAcount')}`,
+      `${i18n.t('deleteAcountDesc')}`,
       [
         {
-          text: "Cancelar",
+          text:  `${i18n.t("cancel")}`,
           onPress: () => console.log("Cancelar apretado"),
           style: "cancel",
         },
         {
-          text: "Eliminar cuenta",
+          text: `${i18n.t('deleteAcount')}`,
           onPress: async () => {
             try {
               await setIsLoading(true);
@@ -194,17 +195,17 @@ export default function ProfilePermissions() {
         type="caption"
         style={{ fontWeight: "600", color: Colors[theme].text + "40" }}
       >
-        PRIVACIDAD
+       {i18n.t("privacy")}
       </MyText>
       <InfoField
         theme={theme}
-        label={"Notificaciones"}
+        label={i18n.t("notification")}
         value={isNotificationSwitchEnabled}
         handleUpdate={handleToggleNotifications}
       />
       <InfoField
         theme={theme}
-        label={"Ubicación"}
+        label={i18n.t("location")}
         value={isLocationSwitchEnabled}
         handleUpdate={handleToggleLocation}
       />
@@ -223,7 +224,7 @@ export default function ProfilePermissions() {
             paddingRight: 10,
           }}
         >
-          Cerrar sesión
+          {i18n.t("logout")}
         </MyText>
       </Pressable>
       <Pressable
@@ -241,7 +242,7 @@ export default function ProfilePermissions() {
             paddingRight: 10,
           }}
         >
-          Eliminar cuenta
+          {i18n.t("deleteAcount")}
         </MyText>
       </Pressable>
       <MyModal
@@ -316,7 +317,7 @@ function MyModal({ isModalOpen, setIsModalOpen, handleDeleteAccount, user }) {
           </TouchableOpacity>
           {/* Correo electrónico */}
           <MyInput
-            label="Correo electrónico"
+            label={i18n.t('email')}
             value={email}
             onChangeText={setEmail}
             autoCapitalize="none"
@@ -325,7 +326,7 @@ function MyModal({ isModalOpen, setIsModalOpen, handleDeleteAccount, user }) {
           />
           {/* Contraseña */}
           <MyInput
-            label="Contraseña"
+            label={i18n.t('password')}
             value={password}
             onChangeText={setPassword}
             secureTextEntry
@@ -333,7 +334,7 @@ function MyModal({ isModalOpen, setIsModalOpen, handleDeleteAccount, user }) {
           />
           {/* Eliminar cuenta */}
           <MyButton
-            title={isLoading ? "Cargando..." : "Eliminar cuenta"}
+            title={isLoading ?  `${i18n.t('loading')}` :  `${i18n.t('deleteAcount')}`}
             onPress={() =>
               handleDeleteAccount(
                 user,

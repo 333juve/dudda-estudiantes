@@ -43,6 +43,7 @@ import Cancel from "../screens/Cancel";
 import NotificationIcon from "../components/notifications/NotificationIcon";
 import { useSelector } from "react-redux";
 import AddLessonInformation from "../screens/addLessonInfor";
+import { i18n } from "../../languages";
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -92,6 +93,7 @@ function MyDrawer() {
               style={{ marginRight: -20 }}
             />
           ),
+          title: `${i18n.t("home")}`,
         }}
       />
       <Drawer.Screen
@@ -106,6 +108,7 @@ function MyDrawer() {
               style={{ marginRight: -20 }}
             />
           ),
+          title: `${i18n.t("profile")}`,
         }}
       />
       <Drawer.Screen
@@ -120,6 +123,7 @@ function MyDrawer() {
               style={{ marginRight: -20 }}
             />
           ),
+          title: `${i18n.t("deposit")}`,
         }}
       />
     </Drawer.Navigator>
@@ -167,6 +171,7 @@ function HomeStack() {
               unSeenNotifications={unSeenNotifications}
             />
           ),
+          title: `${i18n.t("home")}`,
         }}
       />
       <Stack.Screen
@@ -188,9 +193,9 @@ function HomeStack() {
         component={NotificationsScreen}
         options={{
           headerShown: true,
-          title: "Notificaciones",
           headerTintColor: "#fff",
           headerBackTitle: "Atrás",
+          title: `${i18n.t("notification")}`,
         }}
       />
       <Stack.Screen

@@ -11,6 +11,7 @@ import { setUser } from "../features/userReducer";
 import { setNotifications } from "../features/notificationsReducer";
 import { getUser } from "../utils/userOperations";
 import { getNotifications } from "../utils/notificationsOperations";
+import { i18n } from "../../languages";
 
 export default function Splash() {
   const { user } = useSelector((state) => state.user);
@@ -52,7 +53,7 @@ export default function Splash() {
 
   return (
     <View style={styles.container}>
-      <MyText type="title">Cargando...</MyText>
+      <MyText type="title">{i18n.t('loading')}</MyText>
       <ActivityIndicator size={"large"} />
     </View>
   );

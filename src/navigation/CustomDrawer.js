@@ -20,25 +20,26 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Colors from "../../constants/colors";
 import { logoutUser } from "../utils/userOperations";
 import { useNavigation } from "@react-navigation/native";
+import { i18n } from "../../languages";
 
 function handleHelp() {
   Alert.alert(
-    "¿Necesitas ayuda?",
-    "Por favor, envíanos un mensaje o llámanos y nuestro equipo te contactará.",
+    `${i18n.t("needHelp")}`,
+    `${i18n.t("needHelpDesc")}`,
     [
       {
-        text: "Escríbenos",
+        text: `${i18n.t("writeTous")}`,
         onPress: () =>
           Linking.openURL(
             "https://api.whatsapp.com/send?phone=51941379335&text=%C2%A1Hola!%20%C2%BFC%C3%B3mo%20est%C3%A1s%3F%20Necesito%20tu%20ayuda."
           ),
       },
       {
-        text: "Llámanos",
+        text: `${i18n.t("callUs")}`,
         onPress: () => Linking.openURL("tel:+51941379335"),
       },
       {
-        text: "Cancelar",
+        text: `${i18n.t("cancel")}`,
         onPress: () => console.log("Cancelado"),
         style: "cancel",
       },
@@ -56,16 +57,16 @@ export default function CustomDrawer(props) {
 
   async function handleSignOut() {
     Alert.alert(
-      "Cerrar sesión",
-      "¿Estás seguro de que quieres cerrar sesión?",
+      `${i18n.t("logout")}`,
+      `${i18n.t("confirmLogout")}`,
       [
         {
-          text: "Cancelar",
+          text: `${i18n.t("cancel")}`,
           onPress: () => console.log("Cancelar apretado"),
           style: "cancel",
         },
         {
-          text: "Cerrar sesión",
+          text: `${i18n.t("logout")}`,
           onPress: async () => {
             try {
               await logoutUser(dispatch);
@@ -154,7 +155,7 @@ export default function CustomDrawer(props) {
             style={{ marginRight: 15 }}
           />
           <Text style={[styles.drawerItemText, { color: Colors[theme].text }]}>
-            Soporte
+          {i18n.t("supporte")}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -168,7 +169,7 @@ export default function CustomDrawer(props) {
             style={{ marginRight: 10 }}
           />
           <Text style={[styles.drawerItemText, { color: Colors[theme].red }]}>
-            Cerrar sesión
+          {i18n.t("logout")}
           </Text>
         </TouchableOpacity>
       </View>

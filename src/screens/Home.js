@@ -46,6 +46,7 @@ import Entypo from "react-native-vector-icons/Entypo";
 import Colors from "../../constants/colors";
 import { setLessonsReducer } from "../features/lessonsReducer";
 import MyButton from "../components/MyButton";
+import { i18n } from "../../languages";
 
 export default function Home() {
   const user = useSelector((state) => state.user);
@@ -751,7 +752,7 @@ export default function Home() {
                     marginBottom: 30,
                   }}
                 >
-                  Agenda una clase
+                  {i18n.t('scheduleAClass')}
                 </MyText>
                 <TouchableOpacity
                   onPress={() => navigation.navigate("Historial")}
@@ -778,7 +779,7 @@ export default function Home() {
             )}
             {modalContent === "NEW_TUTOR" && (
               <View style={styles.modalContainer}>
-                <MyText style={styles.headerThree}>Agenda una clase</MyText>
+                <MyText style={styles.headerThree}>{i18n.t('scheduleAClass')}</MyText>
                 <TouchableOpacity
                   style={styles.pickSubject(theme)}
                   onPress={() =>
@@ -804,7 +805,7 @@ export default function Home() {
                         moment(selectedDate)
                           .format("dddd, DD [de] MMMM [del] YYYY")
                           .slice(1)
-                      : "Selecciona una fecha"}
+                      : `${i18n.t('selectADate')}`}
                   </Text>
 
                   <Calendar width={20} height={20} />
@@ -837,7 +838,7 @@ export default function Home() {
                         {startTime}
                       </Text>
                     ) : (
-                      <Text style={styles.textTouchable(theme)}>Inicio</Text>
+                      <Text style={styles.textTouchable(theme)}>{i18n.t('start')}</Text>
                     )}
                   </TouchableOpacity>
                   <CustomPickerModal
@@ -850,7 +851,7 @@ export default function Home() {
                     {endTime ? (
                       <Text style={styles.textTouchable(theme)}>{endTime}</Text>
                     ) : (
-                      <Text style={styles.textTouchable(theme)}>Fin</Text>
+                      <Text style={styles.textTouchable(theme)}>{i18n.t('end')}</Text>
                     )}
                   </View>
                   {/* substract hours */}
@@ -875,9 +876,9 @@ export default function Home() {
                     style={{ marginTop: 10, alignSelf: "flex-start" }}
                     type="caption"
                   >
-                    Duración: {hours} hora
+                    {i18n.t('duration')}: {hours} {i18n.t('hour')}
                     {Math.floor(timeDiff / 100) > 1 ? "s" : ""}
-                    {timeDiff % 100 > 0 && ` y ${minutes} minutos`}
+                    {timeDiff % 100 > 0 && ` ${i18n.t('and')} ${minutes} ${i18n.t('hour')}`} 
                   </MyText>
                 }
                 {timeDiff <= 100 && (
@@ -900,7 +901,7 @@ export default function Home() {
                         marginLeft: 5,
                       }}
                     >
-                      El tiempo mínimo para una clase es de 1 hora.
+                      {i18n.t('minimumTime')}
                     </Text>
                   </View>
                 )}
@@ -924,7 +925,7 @@ export default function Home() {
                         marginLeft: 5,
                       }}
                     >
-                      El tiempo máximo para una clase es de 3 horas.
+                      {i18n.t('maximumTime')}
                     </Text>
                   </View>
                 )}
@@ -941,18 +942,18 @@ export default function Home() {
 
                     if (!selectedTutor) {
                       Alert.alert(
-                        "No se encontraron tutores",
-                        "Por favor, intente un horario diferente o contacte al soporte.",
+                        `${i18n.t('noTutor')}`,
+                        `${i18n.t('noTutorDesc')}`,
                         [
                           {
-                            text: "Soporte",
+                            text: `${i18n.t('supporte')}`,
                             onPress: () =>
                               Linking.openURL(
                                 "https://api.whatsapp.com/send?phone=51941379335&text=%C2%A1Hola!%20%C2%BFC%C3%B3mo%20est%C3%A1s%3F%20Necesito%20tu%20ayuda."
                               ),
                           },
                           {
-                            text: "Descartar",
+                            text:  `${i18n.t('cancel')}`,
                             onPress: () => {},
                             style: "cancel",
                           },
@@ -970,7 +971,7 @@ export default function Home() {
                     </Text>
                   ) : (
                     <Text style={{ color: "white", fontSize: 20 }}>
-                      Continuar
+                      {i18n.t('continue')}
                     </Text>
                   )}
                 </TouchableOpacity>
@@ -995,7 +996,7 @@ export default function Home() {
         }
       >
         <Ionicons name="add" size={25} color={"white"} />
-        <MyText style={{ color: "white", marginLeft: 5 }}>Agendar clase</MyText>
+        <MyText style={{ color: "white", marginLeft: 5 }}>{i18n.t('scheduleClass')}</MyText>
       </TouchableOpacity>
 
       <StatusBar barStyle={"light-content"} />

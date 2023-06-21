@@ -12,6 +12,7 @@ import Colors from "../../../constants/colors";
 import { useDispatch, useSelector } from "react-redux";
 import { updatePhoneNumber } from "../../utils/userOperations";
 import { resetPhoneNumber } from "../../features/userReducer";
+import { i18n } from "../../../languages";
 
 function InfoField({
   label,
@@ -76,22 +77,22 @@ export default function ProfileInformation() {
         type="caption"
         style={[styles.caption, { color: Colors[theme].text + "40" }]}
       >
-        INFORMACIÓN PERSONAL
+       {i18n.t("personelInform")}
       </MyText>
-      <InfoField label={"Primer nombre"} value={user.firstName} theme={theme} />
+      <InfoField label={i18n.t("firstName")} value={user.firstName} theme={theme} />
       <InfoField
-        label={"Apellido paterno"}
+        label={i18n.t("lastName")}
         value={user.lastName}
         theme={theme}
       />
-      <InfoField label={"Email"} value={user.email} theme={theme} />
+      <InfoField label={i18n.t("email")} value={user.email} theme={theme} />
       <InfoField
-        label={"Fecha de nacimiento"}
+        label={i18n.t("dob")}
         value={user.birthday}
         theme={theme}
       />
       <InfoField
-        label={"Celular"}
+        label={i18n.t("phone")}
         value={user.phoneNumber}
         theme={theme}
         canEdit

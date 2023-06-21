@@ -15,6 +15,7 @@ import MyButton from "../MyButton";
 import { CountryPicker } from "react-native-country-codes-picker";
 import MyText from "../MyText";
 import { AuthContext } from "../../context/AuthContext";
+import { i18n } from "../../../languages";
 
 export default function SignUp() {
   const {
@@ -72,21 +73,21 @@ export default function SignUp() {
         onBackdropPress={() => setShowCountry(false)}
       />
       <MyText type="title" style={{ marginBottom: 35 }}>
-        ¡Regístrate y enseña con nosotros!
+      {i18n.t("signupMessage")}
       </MyText>
       <MyInput
-        label="Nombres"
+        label={i18n.t("name")}
         onChangeText={setFirstName}
         returnKeyType={"done"}
       />
       <MyInput
-        label="Apellido paterno"
+        label={i18n.t("paternalLastName")}
         onChangeText={setLastName}
         returnKeyType={"done"}
       />
-      <MyDatePicker label="Fecha de nacimiento" onDateChange={setBirthday} />
+      <MyDatePicker  label={`${i18n.t("dob")} *`} onDateChange={setBirthday} />
       <MyText style={{ marginBottom: 5, fontWeight: "bold" }} type="caption">
-        {"Sex"}
+      {i18n.t("sex")}
       </MyText>
       <RadioButtonGroup
         containerStyle={[styles[theme]]}
@@ -122,7 +123,7 @@ export default function SignUp() {
         </TouchableOpacity>
 
         <TextInput
-          placeholder={"Teléfono"}
+          placeholder={i18n.t("phone")}
           autoCapitalize="none"
           onChangeText={setPhoneNumber}
           autoCorrect={false}
@@ -132,14 +133,14 @@ export default function SignUp() {
         />
       </View>
       <MyInput
-        label="Correo electrónico"
+        label={i18n.t("email")}
         onChangeText={setEmail}
         autoCapitalize="none"
         autoCorrect={false}
         returnKeyType={"done"}
       />
       <MyInput
-        label="Contraseña"
+        label={i18n.t("password")}
         onChangeText={setPassword}
         secureTextEntry={!showPassword}
         autoCapitalize="none"
@@ -148,7 +149,7 @@ export default function SignUp() {
         onIconPress={toggleShowPassword}
       />
       <MyInput
-        label="Repetir contraseña"
+        label={i18n.t("repeatPassword")}
         onChangeText={setConfirmPassword}
         secureTextEntry={!showRepeatPassword}
         autoCapitalize="none"
@@ -157,12 +158,12 @@ export default function SignUp() {
         onIconPress={toggleShowRepeatPassword}
       />
       <MyButton
-        title={isLoading ? "Cargando..." : "Registrarme"}
+        title={isLoading ? `${i18n.t("loading")}` :  `${i18n.t("signup")}`}
         disabled={isLoading ? true : false}
         onPress={handleSignUp}
       />
       <MyButton
-        title="Regresar"
+        title={i18n.t("login")}
         type="secondary"
         onPress={() => setAuthState("signIn")}
       />
