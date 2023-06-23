@@ -569,7 +569,7 @@ export default function Home() {
           />
         }
       >
-        <MyText style={styles.lessonsScheduled}>Clases programadas</MyText>
+        <MyText style={styles.lessonsScheduled}>{i18n.t('scheduledClass')}</MyText>
         <MyButton
           onPress={() => navigation.navigate("MyModal")}
           title="Open Modal"
@@ -581,7 +581,7 @@ export default function Home() {
         <View>
           {lessons.length === 0 ? (
             <MyText style={styles.default}>
-              Aún no tienes ninguna clase programada.
+              {i18n.t('noscheduledClass')}
             </MyText>
           ) : (
             <View>

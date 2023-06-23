@@ -16,6 +16,7 @@ import { useSelector, useDispatch } from "react-redux";
 import LessonCard from "../components/payments/LessonCard";
 import { getLessons } from "../utils/lessonsOperations";
 import { useNavigation } from "@react-navigation/native";
+import { i18n } from "../../languages";
 
 export default function Payments() {
   const user = useSelector((state) => state.user);
@@ -58,10 +59,10 @@ export default function Payments() {
       }
     >
       <View style={{ flex: 0.9 }}>
-        <MyText style={styles.lessonsScheduled}>Historial de clases</MyText>
+        <MyText style={styles.lessonsScheduled}>{i18n.t('classHistory')}</MyText>
         {lessons.length === 0 ? (
           <MyText style={styles.default}>
-            Aún no has tenido ninguna clase.
+           {i18n.t('noClassHistory')}
           </MyText>
         ) : (
           lessons.map((lesson) => (

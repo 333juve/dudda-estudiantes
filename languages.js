@@ -212,7 +212,11 @@ const translations = {
     maximumTime:"The maximum time for a class is 3 hours.",
     and:"and",
     noTutor:"No tutors found",
-    noTutorDesc:"Please try a different time or contact support."
+    noTutorDesc:"Please try a different time or contact support.",
+    classHistory:"Class history",
+    noClassHistory:"You haven't had any class yet.",
+    scheduledClass:"Scheduled classes",
+    noscheduledClass:"You don't have any classes scheduled yet."
   },
   es: {
     welcome: "Bienvenido a",
@@ -434,3 +438,7 @@ export const i18n = new I18n(translations);
 //and:"y"
 //noTutor:"No se encontraron tutores"
 //noTutorDesc:"Por favor, intente un horario diferente o contacte al soporte."
+// classHistory:"Historial de clases"
+// noClass:" Aún no has tenido ninguna clase."
+//scheduledClasses:"Clases programadas"
+// noscheduledClass: " Aún no tienes ninguna clase programada."
