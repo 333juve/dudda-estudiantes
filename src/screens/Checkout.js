@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 import {
-  Alert,
-  Button,
   StyleSheet,
-  Text,
   View,
   useColorScheme,
   TouchableOpacity,
@@ -15,8 +12,6 @@ import * as Clipboard from "expo-clipboard";
 import Toast from "react-native-toast-message";
 // ionicons
 import Ionicons from "react-native-vector-icons/Ionicons";
-// moment
-import moment from "moment";
 // my components
 import MyButton from "../components/MyButton";
 import MyText from "../components/MyText";
@@ -25,6 +20,7 @@ import { useNavigation } from "@react-navigation/native";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { useSelector } from "react-redux";
+import { i18n } from "../../languages";
 
 export default function Checkout({ route }) {
   const user = useSelector((state) => state.user);
@@ -112,7 +108,7 @@ export default function Checkout({ route }) {
       videocall: "",
     };
   }
-  
+
   const newLesson = async () => {
     if (unPaidLesson) {
       console.log("Unpaid lesson has not beed added again into firestore");
@@ -207,7 +203,7 @@ export default function Checkout({ route }) {
             </MyText>
 
             <MyText type="caption">
-              Duración:{unPaidLesson?.totalDuration}
+              {i18n.t('duration')}:{unPaidLesson?.totalDuration}
             </MyText>
             <MyText type="caption">Curso:{unPaidLesson?.subject}</MyText>
           </View>
@@ -216,12 +212,12 @@ export default function Checkout({ route }) {
             <MyText type="caption">Fecha: {newLessonFromHome.dateDay}</MyText>
 
             <MyText type="caption">
-              Hora: De {newLessonFromHome.startTime} a{" "}
+              {i18n.t('hour')}: De {newLessonFromHome.startTime} a{" "}
               {newLessonFromHome.endTime}
             </MyText>
 
             <MyText type="caption">
-              Duración: {newLessonFromHome.Tduration}
+            {i18n.t('duration')}: {newLessonFromHome.Tduration}
             </MyText>
             <MyText type="caption">Curso:{newLessonFromHome.subject}</MyText>
             <MyText style={{ fontWeight: "600" }}>
@@ -247,11 +243,10 @@ export default function Checkout({ route }) {
           <View style={styles.divider}></View>
         </View>
         <MyText style={{ marginBottom: 20, fontSize: 16 }}>
-          Para concluir con el registro, por favor, envíanos a nuestro número de
-          WhatsApp el voucher del depósito o Yape.
+           {i18n.t('completeLessonRegistration')}
         </MyText>
         {/* Razón social */}
-        <MyText style={{ fontWeight: "700" }}>Razón Social</MyText>
+        <MyText style={{ fontWeight: "700" }}>{i18n.t('businessName')}</MyText>
         <MyText style={{ marginBottom: 15 }}>DUDDA S.A.C.</MyText>
         {/* BCP (Soles) */}
         <MyText style={{ fontWeight: "700" }}>BCP (Soles)</MyText>
@@ -269,7 +264,7 @@ export default function Checkout({ route }) {
           />
         </TouchableOpacity>
         {/* Interbancaria (CCI) */}
-        <MyText style={{ fontWeight: "700" }}>Interbancaria (CCI)</MyText>
+        <MyText style={{ fontWeight: "700" }}>{i18n.t('interBank')}</MyText>
         <TouchableOpacity
           style={styles.copyWrapper}
           onPress={() => {

@@ -7,12 +7,13 @@ import {
   TouchableOpacity,
   useColorScheme,
   Linking,
-  Alert
+  Alert,
 } from "react-native";
 import * as React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import MyText from "../components/MyText";
+import { i18n } from "../../languages";
 
 export default function Historial() {
   const navigation = useNavigation();
@@ -22,7 +23,7 @@ export default function Historial() {
   const Lesson = ({ lesson, selectedTutor, setSelectedTutor }) => {
     const isSelected = selectedTutor?.id === lesson.tutor.id;
     const theme = useColorScheme();
-  
+
     const handlePress = () => {
       if (isSelected) {
         setSelectedTutor(null);
@@ -30,7 +31,7 @@ export default function Historial() {
         setSelectedTutor(lesson.tutor);
       }
     };
-    
+
     return (
       <TouchableOpacity onPress={handlePress}>
         <View
@@ -67,7 +68,8 @@ export default function Historial() {
               {lesson.subject}
             </MyText>
             <MyText type="caption">
-              Últ. clase: {lesson.date}, de {lesson.startTime} a {lesson.endTime}
+              Últ. clase: {lesson.date}, de {lesson.startTime} a{" "}
+              {lesson.endTime}
             </MyText>
           </View>
         </View>
@@ -98,7 +100,7 @@ export default function Historial() {
   }, []);
 
   const [selectedTutor, setSelectedTutor] = React.useState(null);
-   const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
   // const [schedule, setSchedule] = React.useState([]);
 
   // const getData = async () => {
@@ -126,8 +128,8 @@ export default function Historial() {
       .then(() => navigation.navigate("Inicio"))
       .catch(() => {
         Alert.alert(
-          "Instala WhatsApp",
-          "Asegúrate de tener WhatsApp instalado en tu dispositivo."
+          `${i18n.t("installWhatsapp")}`,
+          `${i18n.t("installWhatsappDesc")}`
         );
       });
   };
@@ -153,15 +155,15 @@ export default function Historial() {
               //   schedule: schedule,
               // });
               Alert.alert(
-                "Envíanos un mensaje",
-                "Por ahora, programa tu clase a través de WhatsApp, escríbenos y te ayudamos.",
+                `${i18n.t("sendusAmess")}`,
+                `${i18n.t("sendusAmessDesc")}`,
                 [
                   {
-                    text: "Confirmar",
+                    text: `${i18n.t("confirm")}`,
                     onPress: initiateWhatsAppSMS,
                   },
                   {
-                    text: "Cancelar",
+                    text: `${i18n.t("cancel")}`,
                     onPress: () => {},
                     style: "cancel",
                   },
@@ -177,7 +179,7 @@ export default function Historial() {
           ]}
         >
           <Text style={{ color: "white", fontSize: 18 }}>
-            {!loading ? "Continuar" : "Cargando..."}
+            {!loading ? `${i18n.t("continue")}` : `${i18n.t("loading")}`}
           </Text>
         </TouchableOpacity>
       </View>

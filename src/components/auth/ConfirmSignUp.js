@@ -2,7 +2,6 @@ import * as React from "react";
 import MyInput from "../MyInput";
 import MyButton from "../MyButton";
 import MyText from "../MyText";
-import { Button } from "react-native";
 import { AuthContext } from "../../context/AuthContext";
 
 export default function ConfirmSignUp() {

@@ -1,53 +1,20 @@
-import {
-  StyleSheet,
-  TextInput,
-  View,
-  TouchableOpacity,
-  Button,
-  Alert,
-  Dimensions,
-  ScrollView,
-  RefreshControl,
-  useColorScheme,
-} from "react-native";
+import { StyleSheet, View, ScrollView, RefreshControl } from "react-native";
 import React from "react";
 import MyText from "../components/MyText";
 import { useSelector, useDispatch } from "react-redux";
 import LessonCard from "../components/payments/LessonCard";
 import { getLessons } from "../utils/lessonsOperations";
-import { useNavigation } from "@react-navigation/native";
 import { i18n } from "../../languages";
-
 export default function Payments() {
   const user = useSelector((state) => state.user);
-  const navigation = useNavigation();
   const { lessons } = useSelector((state) => state.lessons);
   const dispatch = useDispatch();
-  const theme = useColorScheme();
   const [refreshing, setRefreshing] = React.useState(false);
-
   async function handleOnRefresh(userID) {
     setRefreshing(true);
     await getLessons(userID, dispatch);
     setRefreshing(false);
   }
-
-  function formatDate(date) {
-    const d = new Date(date);
-    const year = d.getFullYear();
-    let month = "" + (d.getMonth() + 1);
-    let day = "" + d.getDate();
-
-    if (month.length < 2) {
-      month = "0" + month;
-    }
-    if (day.length < 2) {
-      day = "0" + day;
-    }
-
-    return [day, month, year].join("/");
-  }
-
   return (
     <ScrollView
       style={styles.container}
@@ -59,11 +26,11 @@ export default function Payments() {
       }
     >
       <View style={{ flex: 0.9 }}>
-        <MyText style={styles.lessonsScheduled}>{i18n.t('classHistory')}</MyText>
+        <MyText style={styles.lessonsScheduled}>
+          {i18n.t("classHistory")}
+        </MyText>
         {lessons.length === 0 ? (
-          <MyText style={styles.default}>
-           {i18n.t('noClassHistory')}
-          </MyText>
+          <MyText style={styles.default}>{i18n.t("noClassHistory")}</MyText>
         ) : (
           lessons.map((lesson) => (
             <LessonCard key={lesson.id} lesson={lesson} />

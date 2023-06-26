@@ -17,6 +17,7 @@ import Colors from "../../constants/colors";
 //Vector Icons
 import Entypo from "react-native-vector-icons/Entypo";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import { i18n } from "../../languages";
 
 export default function Agreement() {
   const [selected, setSelected] = React.useState(false);
@@ -27,11 +28,20 @@ export default function Agreement() {
     await AsyncStorage.setItem("@firstLaunch", "true");
     navigation.navigate("Onboarding");
   }
-
+  const [language, setLanguage] = React.useState(null);
+  async function PickLanguage() {
+    const firstLaunch = await AsyncStorage.getItem("@pickLanguage");
+    if (firstLaunch !== null) {
+      setLanguage(firstLaunch);
+    }
+  }
+  React.useEffect(() => {
+    PickLanguage();
+  }, []);
   return (
     <SafeAreaView style={{ flex: 1, marginHorizontal: 10 }}>
       <MyText type="title" style={{ marginTop: 10 }}>
-        Términos y condiciones
+        {i18n.t("termsAndConds")}
       </MyText>
       <ScrollView
         style={{
@@ -44,7 +54,31 @@ export default function Agreement() {
         }}
         showsVerticalScrollIndicator={false}
       >
-        {termsAndConditions.map((term, index) => {
+        {language==='en'? termsAndConditionsEnglish.map((term, index) => {
+          const isSubheader = term.hasOwnProperty("subheader");
+
+          return (
+            <View
+              key={index}
+              style={
+                isSubheader ? styles.subheaderContainer : styles.itemContainer
+              }
+            >
+              {isSubheader ? (
+                <MyText type="caption" style={{ fontWeight: "bold" }}>
+                  {term.subheader}
+                </MyText>
+              ) : (
+                <>
+                  <MyText type="caption" style={{ fontWeight: "bold" }}>
+                    {term.title}
+                  </MyText>
+                  <MyText type="caption">{term.description}</MyText>
+                </>
+              )}
+            </View>
+          );
+        }):termsAndConditionsSpanish.map((term, index) => {
           const isSubheader = term.hasOwnProperty("subheader");
 
           return (
@@ -88,12 +122,12 @@ export default function Agreement() {
           <Entypo name="circle" size={24} color={"gray"} />
         )}
         <MyText style={{ marginLeft: 10 }}>
-          He leído y acepto los términos y condiciones.
+          {i18n.t("acceptTermsAndConds")}
         </MyText>
       </Pressable>
       <MyButton
         style={{ opacity: selected ? 1 : 0.2 }}
-        title="Continuar"
+        title={i18n.t("continue")}
         disabled={!selected}
         onPress={handleOnContinue}
       />
@@ -114,7 +148,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const termsAndConditions = [
+const termsAndConditionsSpanish = [
   {
     title: "1. Introducción",
     description:
@@ -201,5 +235,94 @@ const termsAndConditions = [
     title: "8. Modificaciones",
     description:
       "Nos reservamos el derecho de modificar estos términos y condiciones en cualquier momento. Si realizamos cambios importantes, le notificaremos por correo electrónico o mediante un aviso destacado en nuestra plataforma. Al utilizar nuestros servicios, acepta estos términos y condiciones en su totalidad. Si tiene alguna pregunta o inquietud sobre estos términos y condiciones, comuníquese con nuestro servicio al cliente.",
+  },
+];
+
+const termsAndConditionsEnglish = [
+  {
+    title: "1. Introduction",
+    description:
+      "Welcome to Dudda, the online platform that connects private tutors with students and parents. By using our services, you agree to comply with the following terms and conditions. If you do not agree to these terms and conditions, do not use our services.",
+  },
+  {
+    subheader: "2. Use of Services",
+  },
+  {
+    title: "2.1 Registration",
+    description:
+      "To use our services, you must create an account on our platform by providing accurate and complete personal information. You are responsible for maintaining the confidentiality of your account and password, as well as for all activities that occur under your account. Additionally, to register on Dudda as a tutor, you must be of legal age.",
+  },
+  {
+    title: "2.2 Classes and Payments",
+    description:
+      "Users can schedule an online class and pay a fixed price per teaching hour through our associated payment platform. Tutors will receive the total accumulated payment for the week on Fridays.",
+  },
+  {
+    title: "2.3 Cancellations and Refunds",
+    description:
+      "If you need to cancel a class, you can do so without penalty as long as you provide a 48-hour notice. If you cancel with less than 48-hour notice, a temporary suspension will be applied, preventing you from scheduling new classes or teaching for a certain period of time. If a user has multiple consecutive cancellations or an unjustified absence, their account may be terminated, and they may be prohibited from creating new accounts with the same information.",
+  },
+  {
+    title: "2.4 Content",
+    description:
+      "All user-generated content on our platform, including comments and evaluations of tutors, must comply with our usage guidelines and not violate the intellectual property rights of third parties. We reserve the right to moderate and remove any content we consider inappropriate.",
+  },
+  {
+    title: "2.5 Security and Privacy",
+    description:
+      "We are committed to protecting your personal and financial information by storing it encrypted in our Google Firebase database. We also take security measures to prevent unauthorized access to your information.",
+  },
+  {
+    title: "2.6 Video Classes",
+    description:
+      "All classes will be recorded and reviewed for quality control purposes. The only permitted platforms for video classes are Google Meet, Zoom, and Teams.",
+  },
+  {
+    title: "2.7 Classes and Exclusivity",
+    description:
+      "To schedule a class with a Dudda user, tutors must do so through the application. Any attempt to reschedule outside the application will be considered a serious violation of the terms and conditions and may result in the permanent termination of the user's account. It is important for users to follow the rescheduling process established in the application to ensure a safe and satisfactory experience on Dudda.",
+  },
+  {
+    subheader: "3. Responsibilities",
+  },
+  {
+    title: "3.1 Tutor Responsibilities",
+    description:
+      "Tutors are responsible for providing high-quality online classes to students. Additionally, they must comply with all applicable regulations and requirements in their jurisdiction. Missing a class is a serious offense that will result in a permanent account suspension.",
+  },
+  {
+    title: "3.2 Student Responsibilities",
+    description:
+      "Students are responsible for paying the agreed-upon price for the class and attending the scheduled online class. They must also comply with the usage guidelines of our platform.",
+  },
+  {
+    title: "3.3 Dudda's Responsibilities",
+    description:
+      "We are committed to providing a high-quality and secure platform for connecting private tutors with students. However, we are not responsible for the quality of the content taught by tutors or the attendance of students in scheduled classes.",
+  },
+  {
+    title: "4. Contact",
+    description:
+      "Users can contact our customer service through a provided WhatsApp number on the platform. We also provide a detailed guide that covers most common issues.",
+  },
+  {
+    title: "5. Intellectual Property",
+    description:
+      "Users are responsible for ensuring that any content they publish on our platform does not infringe upon the intellectual property rights of third parties. By posting content on our platform, you grant Dudda a non-exclusive, transferable, sublicensable, royalty-free, and worldwide license to use, copy, reproduce, process, adapt, modify, publish, transmit, display, and distribute such content in any media or form now known or developed in the future.",
+  },
+  {
+    title: "6. Applicable Law",
+    description:
+      "These terms and conditions are governed by the laws of the Republic of Peru. Any dispute or claim related to our services will be resolved in a competent court of the Republic of Peru.",
+  },
+  {
+    title: "7. Account Termination",
+    description:
+      "Dudda reserves the right to terminate any user account that violates these terms and conditions. In the event of account termination, all user account information will be deleted from our database, except for general information that allows us to identify if the same person attempts to create another account.",
+  },
+  {
+    title: "8. Modifications",
+    description:
+      "We reserve the right to modify these terms and conditions at any time. If we make significant changes, we will notify you by email or through a prominent notice on our platform. By using our services, you agree to these terms and conditions in their entirety. If you have any questions or concerns about these terms and conditions, please contact our customer service.",
   },
 ];

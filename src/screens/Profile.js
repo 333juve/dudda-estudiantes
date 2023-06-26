@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  Button,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  RefreshControl,
-} from "react-native";
+import { ScrollView, RefreshControl } from "react-native";
 
 import { useDispatch, useSelector } from "react-redux";
 import { db } from "../config/firebase";
@@ -26,8 +19,8 @@ export default function Profile() {
     const userRef = doc(db, "students", userId);
     const userDoc = await getDoc(userRef);
     dispatch(
-      setUser({        
-        birthday: userDoc.data()?.birthday,        
+      setUser({
+        birthday: userDoc.data()?.birthday,
         createdAt: userDoc.data()?.createdAt,
         email: userDoc.data()?.email,
         firstName: userDoc.data()?.firstName,
@@ -37,16 +30,16 @@ export default function Profile() {
         longitude: userDoc.data()?.longitude,
         notificationToken: userDoc.data()?.notificationToken,
         phoneNumber: userDoc.data()?.phoneNumber,
-        profilePicture: userDoc.data()?.profilePicture,        
+        profilePicture: userDoc.data()?.profilePicture,
       })
     );
-  };
+  }
 
   async function handleRefresh() {
     setRefreshing(true);
-    await getUser(user.id)
-    setRefreshing(false);  
-  };
+    await getUser(user.id);
+    setRefreshing(false);
+  }
 
   return (
     <ScrollView
@@ -63,11 +56,3 @@ export default function Profile() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});

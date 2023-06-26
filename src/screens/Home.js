@@ -100,7 +100,7 @@ export default function Home() {
   }, []);
 
   async function checkFirstLaunch() {
-    const firstLaunch = await AsyncStorage.getItem("@firstLaunch");
+   const firstLaunch = await AsyncStorage.getItem("@firstLaunch");
     if (firstLaunch === null) navigation.navigate("Agreement");
     // const token = await registerForPushNotificationsAsync();
     // const location = await requestUserLocation();
@@ -239,20 +239,20 @@ export default function Home() {
 
   function showOptions(lesson, navigation) {
     Alert.alert(
-      "Configuración",
-      "Por favor, selecciona una de las siguientes opciones.",
+      `${i18n.t('settings')}`,
+      `${i18n.t('settingsDesc')}`,
       [
         {
-          text: "Reportar usuario",
+          text: `${i18n.t('report_User')}`,
           onPress: () => handleReport(lesson),
         },
         {
-          text: "Cancelar clase",
+          text:  `${i18n.t('cancelClass')}`,
           onPress: () => handleCancelLesson(lesson, navigation),
           style: "destructive",
         },
         {
-          text: "Descartar",
+          text:  `${i18n.t('ruleOut')}`,
           onPress: () => console.log("Descartar"),
           style: "cancel",
         },
@@ -262,14 +262,14 @@ export default function Home() {
   }
 
   function handleReport(lesson) {
-    Alert.alert("Reportar usuario", "¿Deseas reportar a este usuario?", [
+    Alert.alert(`${i18n.t('report_User')}`,`${i18n.t('reportUserDesc')}` , [
       {
-        text: "Cancelar",
+        text:  `${i18n.t('cancel')}`,
         onPress: () => console.log("Cancelar pressed"),
         style: "cancel",
       },
       {
-        text: "Reportar",
+        text:  `${i18n.t('report')}`,
         onPress: async () => {
           await updateDoc(doc(db, "lessons", lesson.id), {
             isCanceled: true,
@@ -285,16 +285,16 @@ export default function Home() {
 
   function handleCancelLesson(lesson, navigation) {
     Alert.alert(
-      "Cancelar clase",
-      "¿Estás seguro de que quieres cancelar esta clase?",
+      `${i18n.t('cancelClass')}`,
+      `${i18n.t('cancelClassConfirm')}`,
       [
         {
-          text: "Cancelar",
+          text:  `${i18n.t('cancel')}`,
           onPress: () => console.log("Cancel pressed"),
           style: "cancel",
         },
         {
-          text: "Continuar",
+          text: `${i18n.t('continue')}`,
           onPress: () =>
             navigation.navigate("Cancelar", {
               lesson: lesson,
@@ -315,28 +315,28 @@ export default function Home() {
     try {
       await Linking.openURL(url);
       Alert.alert(
-        "¡Gracias por tu reporte!",
-        "Lo revisaremos a continuación y nos comunicaremos contigo a la brevedad."
+        `${i18n.t('thankyou_for_report')}`,
+        `${i18n.t('thankyou_for_report_desc')}`
       );
     } catch (error) {
       Alert.alert(
         "Error",
-        "No se pudo abrir el correo electrónico. Por favor, inténtalo de nuevo más tarde."
+        `${i18n.t('emailNotOpened')}`
       );
     }
   }
 
   function handleJoinMeeting(selectedLesson) {
     Alert.alert(
-      "¿Unirte a la reunión?",
-      "¿Estás seguro que deseas unirte a la reunión?",
+       `${i18n.t('joinMeet')}`,
+       `${i18n.t('joinMeetDesc')}`,
       [
         {
-          text: "Cancelar",
+          text: `${i18n.t('cancel')}`,
           style: "cancel",
         },
         {
-          text: "Unirse",
+          text: `${i18n.t('join')}`,
           onPress: () => {
             Linking.openURL(selectedLesson.videocall);
           },
@@ -556,6 +556,9 @@ export default function Home() {
       setSelectedDate(null);
     }
   };
+  const removeLang=React.useCallback(async()=>{
+    await AsyncStorage.removeItem('@pickLanguage')
+  },[])
 
   return (
     <BottomSheetModalProvider>
@@ -572,7 +575,11 @@ export default function Home() {
         <MyText style={styles.lessonsScheduled}>{i18n.t('scheduledClass')}</MyText>
         <MyButton
           onPress={() => navigation.navigate("MyModal")}
-          title="Open Modal"
+          title="Open Mol"
+        />
+         <MyButton
+          onPress={removeLang}
+          title="Remove"
         />
          <MyButton
           onPress={() => navigation.navigate("AddLessonInformation")}
@@ -784,12 +791,13 @@ export default function Home() {
                   style={styles.pickSubject(theme)}
                   onPress={() =>
                     Alert.alert(
-                      "¡Pronto más cursos!",
-                      "Actualmente, solo ofrecemos clases de matemáticas."
+                      `${i18n.t('soonMoreCourses')}`,
+                      `${i18n.t('soonMoreCoursesDesc')}`
+                      
                     )
                   }
                 >
-                  <Text style={styles.textTouchable(theme)}>Matemáticas</Text>
+                  <Text style={styles.textTouchable(theme)}>{i18n.t('math')}</Text>
                 </TouchableOpacity>
                 {/* date row */}
                 <TouchableOpacity

@@ -19,6 +19,7 @@ import Colors from "./constants/colors";
 import * as Localization from "expo-localization";
 import { i18n } from "./languages";
 import MyButton from "./src/components/MyButton";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 LogBox.ignoreLogs(["AsyncStorage"]);
 
 Notifications.setNotificationHandler({
@@ -33,12 +34,25 @@ i18n.enableFallback = true;
 export default function Wrapper() {
   const theme = useColorScheme();
   const [language, setLanguage] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
   if (language) {
     i18n.locale = language;
   }
+  async function PickLanguage() {
+    const firstLaunch = await AsyncStorage.getItem("@pickLanguage");
+    if (firstLaunch !== null) {
+      setLanguage(firstLaunch);
+      i18n.locale = firstLaunch;
+    }
+    setLoading(false);
+  }
+
+  React.useEffect(() => {
+    PickLanguage();
+  }, []);
   const handleLanguageSelection = async (selectedLanguage) => {
     setLanguage(selectedLanguage);
-    //await AsyncStorage.setItem("@pickLanguage", selectedLanguage);
+    await AsyncStorage.setItem("@pickLanguage", selectedLanguage);
   };
   console.log(language);
   return language ? (

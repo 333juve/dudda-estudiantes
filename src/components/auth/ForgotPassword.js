@@ -3,6 +3,7 @@ import MyInput from "../MyInput";
 import MyButton from "../MyButton";
 import MyText from "../MyText";
 import { AuthContext } from "../../context/AuthContext";
+import { i18n } from "../../../languages";
 
 export default function ForgotPassword() {
   const { setAuthState, setEmail, isLoading, handleForgotPassword } =
@@ -11,27 +12,26 @@ export default function ForgotPassword() {
   return (
     <React.Fragment>
       <MyText type="title" style={{ marginBottom: 10 }}>
-        ¿Olvidaste tu contraseña?
+        {i18n.t('forgetPassword')}
       </MyText>
       <MyText type="caption" style={{ marginBottom: 20 }}>
-        Por favor, ingresa tu dirección de correo electrónico y te enviaremos un
-        enlace donde podrás restablecer tu contraseña.
+         {i18n.t('forrgetPassMess')}
       </MyText>
       <MyInput
-        label="Correo electrónico"
+        label={i18n.t('email')}
         onChangeText={setEmail}
         autoCapitalize="none"
         autoCorrect={false}
       />
       <MyButton
-        title={isLoading ? "Enviando código..." : "Enviar código"}
+        title={isLoading ?  `${i18n.t('sendingCode')}` : `${i18n.t('sendCode')}`}
         disabled={isLoading ? true : false}
         style={{ marginTop: 20 }}
         onPress={handleForgotPassword}
       />
       <MyButton
         type="secondary"
-        title="Regresar"
+        title={i18n.t('back')}
         onPress={() => setAuthState("signIn")}
       />
     </React.Fragment>

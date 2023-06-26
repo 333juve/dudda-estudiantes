@@ -14,6 +14,7 @@ import {
 } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import moment from "moment";
+import { i18n } from "../../languages";
 
 const AuthContext = React.createContext({
   authState: "default",
@@ -70,10 +71,7 @@ function AuthProvider({ children }) {
     const trimmedEmail = email.trim();
 
     if (!trimmedEmail || !password) {
-      Alert.alert(
-        "Información incompleta",
-        "Por favor, ingresa tu correo electrónico y contraseña."
-      );
+      Alert.alert(`${i18n.t("incompleteInform")}`, `${i18n.t("noEmailRPass")}`);
       return;
     } else {
       try {
@@ -104,8 +102,8 @@ function AuthProvider({ children }) {
         // Error: No existe la cuenta.
         else {
           Alert.alert(
-            "Error al iniciar sesión",
-            "Lo sentimos, no hemos encontrado una cuenta con esa información. Por favor, revisa tus datos e intenta de nuevo.",
+            `${i18n.t("faildToLogin")}`,
+            `${i18n.t("faildToLoginDesc")}`,
             [
               {
                 text: "OK",
@@ -119,8 +117,8 @@ function AuthProvider({ children }) {
       } catch (e) {
         // Error: Credenciales incorrectas.
         Alert.alert(
-          "Error al iniciar sesión",
-          "El correo electrónico o la contraseña son incorrectos. Por favor, verifica tus credenciales e intenta nuevamente.",
+          `${i18n.t("faildToLogin")}`,
+          `${i18n.t("emailOrPasswordisWrong")}`,
           [
             {
               text: "OK",
@@ -148,13 +146,13 @@ function AuthProvider({ children }) {
       !birthday
     ) {
       Alert.alert(
-        "Información incompleta",
-        "Por favor, completa tus datos para poder registrarte."
+         `${i18n.t('incompleteInform')}`,
+        `${i18n('incompleteInform')}`,
       );
       return;
     }
     if (password !== confirmPassword) {
-      Alert.alert("Intente de nuevo", "Las contraseñas no coinciden.");
+      Alert.alert(`${i18n.t('tryAgain')}`, `${i18n.t('passwordNotMatch')}`);
       return;
     }
     try {
@@ -174,9 +172,8 @@ function AuthProvider({ children }) {
     } catch (e) {
       // Error en el registro
       Alert.alert(
-        "Error al registrarse",
-        "Ocurrió un error durante el registro. Por favor, verifica tus datos e intenta nuevamente.",
-        [
+         `${i18n.t('errorSignup')}`,
+         `${i18n.t('errorSignupMess')}`,[
           {
             text: "OK",
             onPress: () => console.log("OK Pressed"),
@@ -192,8 +189,8 @@ function AuthProvider({ children }) {
   async function handleForgotPassword() {
     if (!email) {
       Alert.alert(
-        "Correo electrónico requerido",
-        "Por favor, ingresa tu correo electrónico."
+         `${i18n.t('emailRequired')}`,
+         `${i18n.t('enterEmail')}`
       );
       return;
     }
@@ -201,13 +198,13 @@ function AuthProvider({ children }) {
       setIsLoading(true);
       await sendPasswordResetEmail(auth, email);
       Alert.alert(
-        "Correo enviado",
-        "Por favor, revisa tu correo electrónico para restablecer tu contraseña."
+        `${i18n.t('emailSent')}`,
+        `${i18n.t('checkmailToresetPass')}`
       );
     } catch (e) {
       Alert.alert(
-        "Error al enviar código",
-        "Ocurrió un error al enviar el código para restablecer la contraseña. Por favor, verifica la información ingresada e intenta nuevamente.",
+        `${i18n.t('errorSendingMail')}`,
+        `${i18n.t('errorSendingMailMess')}`,
         [
           {
             text: "OK",

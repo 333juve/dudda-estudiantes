@@ -20,6 +20,7 @@ import {
   sendPushNotification,
   sendPushNotificationExpo,
 } from "../utils/notificationsOperations";
+import { i18n } from "../../languages";
 
 export default function Cancel({ route }) {
   const { lesson } = route.params;
@@ -52,16 +53,16 @@ export default function Cancel({ route }) {
 
   const handleCancelLesson = (lesson) => {
     Alert.alert(
-      "Cancelar clase",
-      "Primera cancelación gratuita. Cancelaciones posteriores pueden llevar a la suspensión permanente.",
+      `${i18n.t('cancelClass')}`,
+      `${i18n.t('cancelClass_desc')}`,
       [
         {
-          text: "Cancelar",
+          text:  `${i18n.t('cancel')}`,
           onPress: () => console.log("Cancel pressed"),
           style: "cancel",
         },
         {
-          text: "Continuar",
+          text:  `${i18n.t('continue')}`,
           onPress: async () => {
             try {
               await updateDoc(doc(db, "lessons", lesson.id), {
@@ -87,7 +88,7 @@ export default function Cancel({ route }) {
 
   return (
     <View style={styles.container}>
-      <MyText type="title">¿Cancelar clase?</MyText>
+      <MyText type="title">{i18n.t('cancelClass')}</MyText>
       <View style={{ marginTop: 20 }}>
         <View
           style={{
@@ -139,7 +140,7 @@ export default function Cancel({ route }) {
 
       <View style={{ marginTop: 20 }}>
         <MyText style={{ marginBottom: 10 }}>
-          Explícanos la razón de la cancelación.
+          {i18n.t('reasonOFCancel')}
         </MyText>
         <TextInput
           style={{
@@ -164,7 +165,7 @@ export default function Cancel({ route }) {
         />
       </View>
       <View style={styles.buttonContainer}>
-        <MyButton title="Cancelar clase" onPress={() => handleCancelLesson(lesson)} />
+        <MyButton title={i18n.t('cancelClass')} onPress={() => handleCancelLesson(lesson)} />
       </View>
     </View>
   );
